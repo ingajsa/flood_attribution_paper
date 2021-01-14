@@ -179,21 +179,17 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
     DataFrame
          model medians of regionally aggregated damages and other indicators
     """
-    # gdp_pc  and population information is available at 
-    # Geiger, Tobias; Frieler, Katja (2017): Continuous national
-    # Gross Domestic Product (GDP) time series for 195 countries:
-    # past observations (1850-2005) harmonized with future projections according
-    # the Shared Socio-economic Pathways (2006-2100). GFZ Data Services.
-    # https://doi.org/10.5880/pik.2017.003
-    # adapt path
 
-    # provide dataset with observational data
+    # provide dataset with observational data these need to be requested from Munich Re
+    # the DataSet needs to be treated with the adjustment for 2005 PPP as done in 
+    # /code/scripts_reconstruction/natcat_damages/flood_damage_conversion.ipynb
     natcat = pd.read_excel('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/Input_PPP_conversion/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
-    countries = pd.read_csv('/home/insauer/projects/NC_Submission/Data/final_country_list.csv')
+    countries = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/supporting_data/final_country_list.csv')
     
     # asset rescaling to correct for the ssp transition and to convert GDP to capital stock
     # datasets can be generated with a separate code discribed in the readme.txt
     if gdp_resc:
+        # here we need the files in /data/exposure_rescaling
         resc_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/RescalingFactors_GDPobs_GDPjpnClean.csv')
         # cap_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/PostProcess_GDP2CapStock_cgdpoClean.csv')
         cap_factors = pd.read_csv('/home/insauer/projects/Attribution/Floods/Data/Input_Data/PostProcess_GDP2CapStock_rgdpnaCleanRM.csv')
@@ -418,7 +414,7 @@ def get_rm(col_names, dataFrame, rm_window):
 
     return dataFrame
 #  Cluster path where data from damage assessment calculated with CLIMADA
-#  is stored
+#  for all model combinations is stored 
 path = '/home/insauer/mnt/ebm/inga/paper_results/paper_resubmission_1_12/'
 sort = ['Year', 'Country']
 years = np.arange(1971, 2012)

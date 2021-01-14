@@ -3,6 +3,14 @@ import pandas as pd
 from climada.entity.exposures.gdp_asset import GDP2Asset
 from climada.util.constants import RIVER_FLOOD_REGIONS_CSV
 
+"""Ths script generates a file  with conversion factorsto remove the SSP transition from
+   the assets obtained on the basis of gridded GDP and to convert it from the total national
+   wealth indicator to capital stock. The time series for the capital stock conversion needs to be 
+   smoothed afterwards (in clean_and_smooth.ipynb). Check whether datasets contain 0s,nans or infs
+   and replace them by 1 if necessary. This is justified that an asset given in total national
+   wealth as assumed to be the best option if the conversion is not possible due to missing data.
+"""
+
 gdp_pc = pd.read_csv('~/data/exposure_rescaling/' +
                      'Income-PPP2005_ISIMIP_merged_Maddison-pwt81_1850-2015_extended_WDI-1.csv')
 

@@ -5,8 +5,7 @@ Spyder Editor
 
 This file aggregates multi-model flood damage output on country level
 to regional model medians, taking into account subregional discharge trends.
-Additional variables such as GDP, Pop, Capital Stock, GDP_pc and recorded
-damages are added.
+Adding recorded damage for each country and year.
 """
 
 import numpy as np
@@ -237,12 +236,17 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
          model medians of regionally aggregated damages and other indicators
     """
 
-    # provide dataset with observational data assigned to each subregion...this needs to be processed previously
+    # provide dataset with observational data these need to be requested from Munich Re
+    # the DataSet needs to be treated with the adjustment for 2005 PPP as done in
+    # /code/scripts_reconstruction/natcat_damages/flood_damage_conversion.ipynb
+    # afterwards the subregional assignment needs to be done with
+    # /code/scripts_reconstruction/natcat_damages/record_assignment_basin.py
     natcat = pd.read_csv('/home/insauer/projects/NC_Submission/Data/natcat_damages/natcat_subregions.csv')
-    countries = pd.read_csv('/home/insauer/projects/NC_Submission/Data/final_country_list.csv')
+    countries = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/supporting_data/final_country_list.csv')
     # and to convert GDP to capital stock
     # datasets can be generated with a separate code discribed in the readme.txt
     if gdp_resc:
+        # here we need the files in /data/exposure_rescaling
         # asset rescaling to correct for the ssp transition
         resc_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/RescalingFactors_GDPobs_GDPjpnClean.csv')
         # asset rescaling to convert to capital stock
