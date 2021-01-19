@@ -117,10 +117,13 @@ rgba_light = cmap(0.22)
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_dark, label ='Basins with positive discharge trend')
 neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_light, label ='Basins with negative discharge trend')
-leg1 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.67, 0.18))  
+leg1 = ax.legend(handles = [pos_box, neg_box], frameon=1, fontsize = 2.2,bbox_to_anchor=(0.67, 0.18))  
+frame = leg1.get_frame()
+frame.set_facecolor('white')
+frame.set_edgecolor('white')
+frame.set_linewidth(0)
 
-
-
+plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI4_basin_trends.png',  bbox_inches = 'tight', resolution=600)
 
 #plt.savefig('/home/insauer/projects/Attribution/Floods/Plots/FinalPaper/PreliminaryPlots/Region_map.svg', bbox_inches = 'tight',format = 'svg')
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI3_basin_trends.png',  bbox_inches = 'tight', resolution=600)
+#plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI4_basin_trends.png',  bbox_inches = 'tight', resolution=600)

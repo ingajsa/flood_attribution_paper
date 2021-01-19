@@ -46,7 +46,7 @@ region_abs={'GLB': 'GLB',
             'NAM':'NAM', 
             'CHN':'EAS',
             'LAM':'LAM', 
-            'EUR':'WEU',
+            'EUR':'EUR',
             'AUS':'OCE',
             'CAS':'CAS',
             'SSAF':'SSA',
@@ -76,61 +76,33 @@ for i in range(10):
         
                 # f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Impact_Pred_1thrd']), color='#8856a7', alpha = 0.5, linewidth = 1.)
                 # f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Impact_Pred_2thrd']), color='#8856a7', alpha = 0.5, linewidth = 1.)
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['natcat_flood_damages_2005_CPI']), label='$D_{Obs}$', color='black', linewidth = 1.) 
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['natcat_flood_damages_2005_CPI']), label='D$_{Obs}$', color='black', linewidth = 1.) 
                 f3_ax1.scatter(DATA_regionFull['Year'], np.log10(DATA_regionFull['natcat_flood_damages_2005_CPI']), color='black', marker = '_', s = 1) 
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_Pred']), label='$D_{Full}$', color='#8856a7', linewidth = 1.)
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_Pred']), label='D$_{Full}$', color='#8856a7', linewidth = 1.)
                 
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_2y_offset']), label='$D_{CliExp}$', color='#ff7f00', linewidth = 1.)
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_2y_offset']), label='D$_{CliExp}$', color='#ff7f00', linewidth = 1.)
             
                 #f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_ImpFix_2y_offset']), label='$Loss_{Haz}$', color='#4575b4', linewidth = 1.)
                 
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_ImpFix_2y_offset']), label='$D_{2010}$', color='#4575b4', linewidth = 1.)
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_ImpFix_2y_offset']), label='D$_{1980}$', color='#4575b4', linewidth = 1.)
         
                 
                 
                 #f3_ax1.fill_between(DATA_regionFull['Year'],np.log10(DATA_regionFull['Impact_Pred_1thrd']) , np.log10(DATA_regionFull['Impact_Pred_2thrd']), color='#8856a7', alpha=0.2, linewidth = 1.)
                 if i ==5:
                 
-                    f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,0.78), fontsize = 7)
+                    f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,0.78), fontsize = 7.5)
                 
                 else:
                     
-                    f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,0.78), fontsize = 8)
+                    f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,0.78), fontsize = 7.5)
                 
                 if i ==0 and j ==0:
                     handles, labels = f3_ax1.get_legend_handles_labels()
-                    leg =f3_ax1.legend(handles[:2], labels[:2], loc ='lower left', labelspacing = 0.1, frameon=True, fontsize = 7, handlelength = 1.1 ) 
+                    leg =f3_ax1.legend(handles[:2], labels[:2], loc ='lower left', labelspacing = 0.1, frameon=True, fontsize = 7, handlelength = 1.1) 
                     f3_ax1.legend(handles[2:], labels[2:], loc ='lower right', labelspacing = 0.1, frameon=True, fontsize = 7,  handlelength = 1.1)
                     f3_ax1.add_artist(leg)
-        
-                # f3_ax1.plot(DATA_regionFull['Year'], 
-                #     np.log10(DATA_regionFull['model_flood_damages_onethird_quantile_2005flospros']),
-                #     color='#4575b4', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-                
-                
-                # f3_ax1.plot(DATA_regionFull['Year'],
-                #     np.log10(DATA_regionFull['model_flood_damages_twothird_quantile_2005flospros']),
-                #     color='#4575b4', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-        
-                # f3_ax1.fill_between(DATA_regionFull['Year'],np.log10(DATA_regionFull['model_flood_damages_onethird_quantile_2005flospros']) ,
-                #              np.log10(DATA_regionFull['model_flood_damages_twothird_quantile_2005flospros']),
-                #              color='#4575b4', alpha=0.2)
-            
-                # f3_ax1.plot(DATA_regionFull['Year'], 
-                #     np.log10(DATA_regionFull['model_flood_damages_onethird_quantile']),
-                #     color='#ff7f00', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-                # f3_ax1.plot(DATA_regionFull['Year'],
-                #     np.log10(DATA_regionFull['model_flood_damages_twothird_quantile']),
-                #     color='#ff7f00', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-        
-                # f3_ax1.fill_between(DATA_regionFull['Year'],np.log10(DATA_regionFull['model_flood_damages_onethird_quantile']) ,
-                #              np.log10(DATA_regionFull['model_flood_damages_twothird_quantile']),
-                #              color='#ff7f00', alpha=0.2)
-                #r_rang = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'SP_corrcoef_pred_observed'].sum()
-                #r_rang90 = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'SP_corrcoef_pred_observed90'].sum()
-                #r2_90 = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'P_ExpVar_model_corrected_observed90'].sum()
-                
-                #r_log = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'P_LOG_ExpVar_model_corrected_observed'].sum()
+
                 r_lin = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'P_ExpVar_pred_observed'].sum()
 
                 #r2 = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'New_explained_variance'].sum()
@@ -139,10 +111,10 @@ for i in range(10):
                 
                 if j ==1:
                     dis = 'Pos'
-                    f3_ax1.set_title('{}'.format(region_abs[regions[r]])+'$_{+}$', position = (0.5,0.78), fontsize = 8)
+                    f3_ax1.set_title('{}'.format(region_abs[regions[r]])+'$_{+}$', position = (0.5,0.78), fontsize = 7.5)
                 else:
                     dis = 'Neg'
-                    f3_ax1.set_title('{}'.format(region_abs[regions[r]])+'$_{-}$', position = (0.5,0.78), fontsize = 8)
+                    f3_ax1.set_title('{}'.format(region_abs[regions[r]])+'$_{-}$', position = (0.5,0.78), fontsize = 7.5)
                 
                 #f3_ax1.plot(DATA_region['Year'], np.log10(DATA_region['Impact_Pred_1thrd_{}'.format(dis)]), color='#8856a7', alpha = 0.5, linewidth = 1.)
                 #f3_ax1.plot(DATA_region['Year'], np.log10(DATA_region['Impact_Pred_2thrd_{}'.format(dis)]), color='#8856a7', alpha = 0.5, linewidth = 1.)
@@ -196,7 +168,7 @@ for i in range(10):
                 #r_rang90 = DATA_FIT.loc[DATA_FIT['Region']==regions[r]+'_'+dis, 'SP_corrcoef_pred_observed90'].sum()
                 
             #text_LOG = 'R²='+str(round(r_log*100,1))+ '% (LOG)'
-            text_lin = 'R²='+str(round(r_lin*100,1))+ '%'
+            text_lin = '='+str(round(r_lin*100,1))+ '%'
             #text_r2 = 'R²='+str(round(r2*100,1))+ '%'
             #text_lin_rm = 'R²3yrm='+str(round(r_lin_rm*100,1))+ '% (LIN)'
             #text_r = 'r_rank='+str(round(r_rang,3))
@@ -210,26 +182,37 @@ for i in range(10):
             
             f3_ax1.set_yticks([6,8,10])
             f3_ax1.set_yticklabels(['','',''])
+            if j == 0 :
+                f3_ax1.set_yticklabels(['6','8','10'], fontsize = 7.5)
             if i in [2]:
-                f3_ax1.set_ylim((5.5, 12))
+                f3_ax1.set_ylim((5, 11.5))
             
             elif i in [1]:
-                f3_ax1.set_ylim((4.5, 11.5))
+                f3_ax1.set_ylim((3.3, 11.6))
                 
             elif i in [4]:
-                f3_ax1.set_ylim((4, 11))
+                f3_ax1.set_ylim((5, 11.5))
             
             elif i in [3]:
-                f3_ax1.set_ylim((4.5, 11))
+                f3_ax1.set_ylim((1.8, 11.2))
+                f3_ax1.set_yticks([4, 6, 8])
+                if j == 0:
+                    f3_ax1.set_yticklabels(['4','6','8'])
                 
             elif i in [6]:
-                f3_ax1.set_ylim((4, 10.5))
+                f3_ax1.set_ylim((2.8, 10))
+                f3_ax1.set_yticks([4, 6, 8])
+                if j == 0:
+                    f3_ax1.set_yticklabels(['4','6','8'])
                 
-            elif i in [7]:
+            elif i in [5,7]:
                 f3_ax1.set_ylim((5.5, 11.5))
             
             elif i in [8]:
-                f3_ax1.set_ylim((4.5, 11))
+                f3_ax1.set_ylim((3.5, 10.5))
+                f3_ax1.set_yticks([4, 6, 8])
+                if j == 0:
+                    f3_ax1.set_yticklabels(['4','6','8'])
             
             elif i in [0]:
                 f3_ax1.set_ylim((7, 12))
@@ -238,12 +221,12 @@ for i in range(10):
                 if j == 0:
                     f3_ax1.set_yticklabels(['8','10'])
             else:
-                f3_ax1.set_ylim((5., 11.5))
+                f3_ax1.set_ylim((3.65, 11))
             
             f3_ax1.set_xlim((1978 ,2013))
-            f3_ax1.annotate( xy=(1990, f3_ax1.get_ylim()[0]+0.08*(f3_ax1.get_ylim()[1]-f3_ax1.get_ylim()[0]) ) ,s=text_lin, fontsize=7 )
-            #f3_ax1.annotate( xy=(1998, f3_ax1.get_ylim()[0]+0.15*(f3_ax1.get_ylim()[1]-f3_ax1.get_ylim()[0]) ) ,s=text_r, fontsize=7 )
-            
+    
+            f3_ax1.annotate( xy=(1991.8, f3_ax1.get_ylim()[0]+0.08*(f3_ax1.get_ylim()[1]-f3_ax1.get_ylim()[0]) ) ,s='R²', fontsize=7, fontstyle='italic')
+            f3_ax1.annotate( xy=(1993.7, f3_ax1.get_ylim()[0]+0.08*(f3_ax1.get_ylim()[1]-f3_ax1.get_ylim()[0]) ) ,s=text_lin, fontsize=7)
             
             #f3_ax1.annotate( xy=(1980, f3_ax1.get_ylim()[0]+0.24*(f3_ax1.get_ylim()[1]-f3_ax1.get_ylim()[0]) ) ,s=text_r2, fontsize=7 )
             #f3_ax1.annotate( xy=(1980, f3_ax1.get_ylim()[0]+0.15*(f3_ax1.get_ylim()[1]-f3_ax1.get_ylim()[0]) ) ,s=text_lin, fontsize=7 )
@@ -258,24 +241,15 @@ for i in range(10):
             
             
             if i == 9:
-                f3_ax1.set_xticklabels(['1980','1990','2000','2010'], fontsize =7)
+                f3_ax1.set_xticklabels(['1980','1990','2000','2010'], fontsize =7.5)
             
             if i ==4 and j ==0:
-                f3_ax1.set_ylabel('LOG10 (Damages 2005 USD)', fontsize=8, labelpad=-1)
+                f3_ax1.set_ylabel('log$_{10}$(Damages in 2005 USD)', fontsize=8, labelpad=-1)
             
-            if j == 0 and i !=0:
-                f3_ax1.set_yticklabels(['6','8','10'], fontsize=8)
+
             
-            if i == 4 and j ==0:
-                f3_ax1.set_xticklabels(['1980','1990','2000', '2010'],fontsize=8)
-                f3_ax1.set_xlabel('Year', fontsize=9, labelpad=-2)
-            
-            if i == 4 and j ==0:
-                f3_ax1.set_xticklabels(['1980','1990','2000', '2010'],fontsize=8)
-                f3_ax1.set_xlabel('Year', fontsize=9, labelpad=-2)
-            
-            if i == 3 and j ==1:
-                f3_ax1.set_xticklabels(['1980','1990','2000', '2010'],fontsize=8)
+            if i == 9 and j ==1:
+                f3_ax1.set_xticklabels(['1980','1990','2000', '2010'],fontsize=7.5)
                 f3_ax1.set_xlabel('Year', fontsize=9, labelpad=-2)
             
             f3_ax1.tick_params(axis="x", direction = 'in',length = 4)
@@ -325,46 +299,26 @@ for i in range(10):
         i_neg8 =  data_attr_reg_neg.loc[:,'Change In'].sum()
         n_neg8 =  data_attr_reg_neg.loc[:,'Change Nn'].sum()
         
-        # h7 = data_attr_reg.loc[:,'Change H7'].sum()
-        # h_pos7 =  data_attr_reg_pos.loc[:,'Change H7'].sum()
-        # h_neg7 =  data_attr_reg_neg.loc[:,'Change H7'].sum()
-        
         h8_sig = data_attr_reg.loc[:,'Sign H'].sum()
-        h_pos8_sig =  data_attr_reg_pos.loc[:,'Sign H'].sum()
-        h_neg8_sig =  data_attr_reg_neg.loc[:,'Sign H'].sum()
-        
-        e8_sig = data_attr_reg.loc[:,'Sign H'].sum()
-        e_pos8_sig =  data_attr_reg_pos.loc[:,'Sign H'].sum()
-        e_neg8_sig =  data_attr_reg_neg.loc[:,'Sign H'].sum()
-        
-        v8_sig = data_attr_reg.loc[:,'Sign H'].sum()
-        v_pos8_sig =  data_attr_reg_pos.loc[:,'Sign H'].sum()
-        v_neg8_sig =  data_attr_reg_neg.loc[:,'Sign H'].sum()
-        
-        i8_sig = data_attr_reg.loc[:,'Sign I'].sum()
-        i_pos8_sig =  data_attr_reg_pos.loc[:,'Sign I'].sum()
-        i_neg8_sig =  data_attr_reg_neg.loc[:,'Sign I'].sum()
-        
-        # h7_sig = data_attr_reg.loc[:,'Sign H7'].sum()
-        # h_pos7_sig =  data_attr_reg_pos.loc[:,'Sign H7'].sum()
-        # h_neg7_sig =  data_attr_reg_neg.loc[:,'Sign H7'].sum()
-        # e = data_attr_reg.loc[:,'Change En'].sum()
-        # v = data_attr_reg.loc[:,'Change Vn'].sum()
-        # im = data_attr_reg.loc[:,'Change In'].sum()
+        h8_pos_sig = data_attr_reg_pos.loc[:,'Sign H'].sum()
+        h8_neg_sig = data_attr_reg_neg.loc[:,'Sign H'].sum()
+        sig = [h8_sig, h8_pos_sig, h8_neg_sig]
 
         y=[h8,e8,v8,i8,h_pos8,e_pos8,v_pos8, i_pos8, h_neg8,e_neg8,v_neg8, i_neg8]
         x=[0,1,2,3,5,6,7,8,10,11,12,13]
-        colour_code = ['#4575b4','gold','#d73027','#8856a7','#4575b4','#fee090','#d73027','#8856a7','#4575b4','#fee090','#d73027','#8856a7']
+        colour_code = ['darkblue','gold','brown','mediumpurple','darkblue','gold','brown','mediumpurple','darkblue','gold','brown','mediumpurple']
         #y= [h_pos8,h8,h_neg8,h_pos7,h7,h_neg7]
-        
+        c=0
         for a in range(12):
-            sig = 0.05
-            if sig<0.1:
-                f3_ax2.bar(x[a],y[a], color =colour_code[a])
+            if a in [0, 4, 8]:
+                if sig[c]<0.1:
+                    f3_ax2.bar(x[a],y[a], color =colour_code[a])
+                    
+                else:
+                    f3_ax2.bar(x[a],y[a], color ='#5170d7')
+                c+=1
             else:
-                f3_ax2.bar(x[a],y[a], color = colour_code[a], alpha = 0.2)
-           
-        #f3_ax2.scatter([3,8,13], [n8,n_pos8,n_neg8],width = 0.3, color ='black')
+                f3_ax2.bar(x[a],y[a], color =colour_code[a])
         
 
         
@@ -373,7 +327,7 @@ for i in range(10):
         
         
         #f3_ax2.set_yticklabels(['-5%','5%'], fontsize = 7)
-        f3_ax2.set_xticklabels(['C', 'E', 'V', 'M', 'C', 'E', 'V', 'M','C', 'E', 'V', 'M'], rotation = 0.,fontsize = 5)
+        f3_ax2.set_xticklabels(['C', 'E', 'V', 'M', 'C', 'E', 'V', 'M','C', 'E', 'V', 'M'], rotation = 0.,fontsize = 5, fontstyle= 'italic')
         f3_ax2.axhline(y=0,linewidth=0.5, color='k')
         f3_ax2.axvline(x=4,linewidth=0.3, color='k', linestyle = '-')
         f3_ax2.axvline(x=9,linewidth=0.3, color='k', linestyle = '-')
@@ -385,29 +339,29 @@ for i in range(10):
         #f3_ax2.set_title('80+   71+ ', fontsize = 7, position = (0.5,0.82))
         
         if i == 4:
-            f3_ax2.set_ylabel('Relative Trend in %/year', fontsize=7, labelpad = 2.5)
+            f3_ax2.set_ylabel('Relative Trend in % per year', fontsize=7, labelpad = 2.5)
         
-        # if i in [2]:
+        # if i in [2]:R²
         #     f3_ax2.set_ylim(-30,30)
         #     f3_ax2.set_yticks([-15,15])
         #     f3_ax2.set_yticklabels(['-15%','15%'], fontsize = 6)
             
         if i in [2]:
-            f3_ax2.set_ylim(-10,20)
-            f3_ax2.set_yticks([-5,10])
-            f3_ax2.set_yticklabels(['-5%','10%'], fontsize = 6)
-         
-        elif i in [6]:
-            f3_ax2.set_ylim(-2, 30)
-            
-            f3_ax2.set_yticks([0, 10])
-            f3_ax2.set_yticklabels(['0%','10%'], fontsize = 6)
-        
-        elif i in [8]:
-            f3_ax2.set_ylim(-5, 10)
-            
+            f3_ax2.set_ylim(-7,12)
             f3_ax2.set_yticks([-2,5])
             f3_ax2.set_yticklabels(['-2%','5%'], fontsize = 6)
+         
+        elif i in [6]:
+            f3_ax2.set_ylim(-2, 38)
+            
+            f3_ax2.set_yticks([0, 15])
+            f3_ax2.set_yticklabels(['0%','15%'], fontsize = 6)
+        
+        elif i in [8]:
+            f3_ax2.set_ylim(-1, 8)
+            
+            f3_ax2.set_yticks([0,2])
+            f3_ax2.set_yticklabels(['0%','2%'], fontsize = 6)
             
         elif i in [3]:
             f3_ax2.set_ylim(-3, 3)
@@ -416,23 +370,23 @@ for i in range(10):
             f3_ax2.set_yticklabels(['-1%','1%'], fontsize = 6)
             
         elif i in [5]:
-            f3_ax2.set_ylim(-10,15)
+            f3_ax2.set_ylim(-5,10)
             
-            f3_ax2.set_yticks([-5,5])
-            f3_ax2.set_yticklabels(['-5%','5%'], fontsize = 6)
+            f3_ax2.set_yticks([-2,5])
+            f3_ax2.set_yticklabels(['-2%','5%'], fontsize = 6)
             
         elif i in [7]:
-            f3_ax2.set_ylim(-5,35)
+            f3_ax2.set_ylim(-5,30)
             
             f3_ax2.set_yticks([-2,15])
             f3_ax2.set_yticklabels(['-2%','15%'], fontsize = 6)
 
             
         elif i in [9]:
-            f3_ax2.set_ylim(-5,15)
+            f3_ax2.set_ylim(-3,15)
             
-            f3_ax2.set_yticks([-2,5])
-            f3_ax2.set_yticklabels(['-2%','5%'], fontsize = 6)
+            f3_ax2.set_yticks([-1,5])
+            f3_ax2.set_yticklabels(['-1%','5%'], fontsize = 6)
             
         elif i in [4]:
             f3_ax2.set_ylim(-5,5)
@@ -442,9 +396,9 @@ for i in range(10):
         
         
         elif i in [1]:
-            f3_ax2.set_ylim(-3,4)
-            f3_ax2.set_yticks([-2,2])
-            f3_ax2.set_yticklabels(['-2%','2%'], fontsize = 6)
+            f3_ax2.set_ylim(-1.5,4)
+            f3_ax2.set_yticks([-1,2])
+            f3_ax2.set_yticklabels(['-1%','2%'], fontsize = 6)
         
         else:
 
@@ -475,14 +429,14 @@ for i in range(10):
                 f3_ax2.axvline(x=(xx[ns]-0.4), ymin=lims, ymax=zerlim,linewidth=1, color='k')
                 f3_ax2.axvline(x=(xx[ns]+0.4), ymin=lims, ymax=zerlim,linewidth=1, color='k')
             
-        f3_ax2.annotate( xy=(1., f3_ax2.get_ylim()[1]-0.1*(f3_ax2.get_ylim()[1]-f3_ax2.get_ylim()[0]) ) ,s= 'R', fontsize=7 )
-        f3_ax2.annotate( xy=(6., f3_ax2.get_ylim()[1]-0.1*(f3_ax2.get_ylim()[1]-f3_ax2.get_ylim()[0]) ) ,s= '$R_{+}$', fontsize=7 )    
-        f3_ax2.annotate( xy=(11., f3_ax2.get_ylim()[1]-0.1*(f3_ax2.get_ylim()[1]-f3_ax2.get_ylim()[0]) ) ,s= '$R_{-}$', fontsize=7 )
+        f3_ax2.annotate( xy=(1., f3_ax2.get_ylim()[1]-0.11*(f3_ax2.get_ylim()[1]-f3_ax2.get_ylim()[0]) ) ,s= '$R$', fontsize=7 )
+        f3_ax2.annotate( xy=(6., f3_ax2.get_ylim()[1]-0.11*(f3_ax2.get_ylim()[1]-f3_ax2.get_ylim()[0]) ) ,s= '$R_{+}$', fontsize=7 )    
+        f3_ax2.annotate( xy=(11., f3_ax2.get_ylim()[1]-0.11*(f3_ax2.get_ylim()[1]-f3_ax2.get_ylim()[0]) ) ,s= '$R_{-}$', fontsize=7 )
     r+=1
         
 
 plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI7_Figure.png',bbox_inches = 'tight',dpi =600)
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI7_Figure.svg',bbox_inches = 'tight', format = 'svg')
+plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI7_Figure.pdf',bbox_inches = 'tight', format = 'pdf')
 
 
 

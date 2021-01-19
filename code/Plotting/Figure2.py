@@ -81,13 +81,13 @@ for i in range(10):
         
                 # f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Impact_Pred_1thrd']), color='#8856a7', alpha = 0.5, linewidth = 1.)
                 # f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Impact_Pred_2thrd']), color='#8856a7', alpha = 0.5, linewidth = 1.)
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['natcat_flood_damages_2005_CPI']), label='$D_{Obs}$', color='black', linewidth = 1.) 
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['natcat_flood_damages_2005_CPI']), label='D$_{Obs}$', color='black', linewidth = 1.) 
                 f3_ax1.scatter(DATA_regionFull['Year'], np.log10(DATA_regionFull['natcat_flood_damages_2005_CPI']), color='black', marker = '_', s = 3) 
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_Pred']), label='$D_{Full}$', color='#8856a7', linewidth = 1.)
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_Pred']), label='D$_{Full}$', color='#8856a7', linewidth = 1.)
                 
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_2y_offset']), label='$D_{CliExp}$', color='#ff7f00', linewidth = 1.)
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Impact_2y_offset']), label='D$_{CliExp}$', color='#ff7f00', linewidth = 1.)
             
-                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_ImpFix_2y_offset']), label='$D_{1980}$', color='#4575b4', linewidth = 1.)
+                f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_ImpFix_2y_offset']), label='D$_{1980}$', color='#4575b4', linewidth = 1.)
                 
                 #f3_ax1.plot(DATA_regionFull['Year'], np.log10(DATA_regionFull['Norm_Imp2010_2y_offset']), label='$Loss2010_{Haz}$', color='mediumseagreen', linewidth = 1., linestyle ='--', alpha = 0.5)
         
@@ -103,6 +103,7 @@ for i in range(10):
                     f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,0.78), fontsize = 8)
                 
                 if i ==0 and j ==0:
+                    
                     handles, labels = f3_ax1.get_legend_handles_labels()
                     leg =f3_ax1.legend(handles[:2], labels[:2], loc ='lower left', labelspacing = 0.1, frameon=True, fontsize = 7.5, handlelength = 1.1) 
                     f3_ax1.legend(handles[2:], labels[2:], loc ='lower right', labelspacing = 0.1, frameon=True, fontsize = 7.5,  handlelength = 1.1)
@@ -142,35 +143,7 @@ for i in range(10):
             
                     f3_ax1.plot(DATA_region['Year'], np.log10(DATA_region['Norm_Impact_Pred_{}'.format(dis)]), label='$Loss_{Full}$', color='#8856a7', linewidth = 1.)
                     
-                # f3_ax1.fill_between(DATA_region['Year'],np.log10(DATA_region['Impact_Pred_1thrd_{}'.format(dis)]) , np.log10(DATA_region['Impact_Pred_2thrd_{}'.format(dis)]), color='#8856a7', alpha=0.2, linewidth = 1.)
-                
-        
-                # f3_ax1.plot(DATA_region['Year'], 
-                #     np.log10(DATA_region['ImpFix_2y{}_onethird_quantile'.format(dis)]),
-                #     color='#4575b4', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-                
-                
-                # f3_ax1.plot(DATA_region['Year'],
-                #     np.log10(DATA_region['ImpFix_2y{}_twothird_quantile'.format(dis)]),
-                #     color='#4575b4', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-        
-                # f3_ax1.fill_between(DATA_region['Year'],np.log10(DATA_region['ImpFix_2y{}_onethird_quantile'.format(dis)]) ,
-                #              np.log10(DATA_region['ImpFix_2y{}_onethird_quantile'.format(dis)]),
-                #              color='#4575b4', alpha=0.2)
-            
-                # f3_ax1.plot(DATA_region['Year'], 
-                #     np.log10(DATA_region['Impact_2y{}_onethird_quantile'.format(dis)]),
-                #     color='#ff7f00', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-                # f3_ax1.plot(DATA_region['Year'],
-                #     np.log10(DATA_region['Impact_2y{}_twothird_quantile'.format(dis)]),
-                #     color='#ff7f00', alpha = 0.5, linestyle = '--', linewidth = 0.5)
-        
-                # f3_ax1.fill_between(DATA_region['Year'],np.log10(DATA_region['Impact_2y{}_onethird_quantile'.format(dis)]) ,
-                #              np.log10(DATA_region['Impact_2y{}_twothird_quantile'.format(dis)]),
-                #              color='#ff7f00', alpha=0.2)
-                
-                
-                
+
                 r_lin = DATA_FIT.loc[DATA_FIT['Region']==regions[r]+'_'+dis, 'ExpVar_model_pred_observed'].sum()
 
 
@@ -249,7 +222,7 @@ for i in range(10):
                 f3_ax1.set_xticklabels(['1980','1990','2000','2010'], fontsize =7.5)
             
             if i ==4 and j ==0:
-                f3_ax1.set_ylabel('LOG10(Damages in 2005 USD)', fontsize=8, labelpad=-1)
+                f3_ax1.set_ylabel('log$_{10}$(Damages in 2005 USD)', fontsize=8, labelpad=-1)
             
 
             

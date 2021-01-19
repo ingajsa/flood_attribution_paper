@@ -111,11 +111,12 @@ for i in range(1):
                               
         tele_names = ['tele_pos', 'tele', 'tele_neg']
         
-        df_teles['limit'] = ['ENSO_up', 'ENSO_bot','ENSO_pv',\
-                 'PDO_up', 'PDO_bot','PDO_pv','NAO_up', 'NAO_bot', 'NAO_pv',\
-                 'AMO_up', 'AMO_bot','AMO_pv',\
-                 'ENSO_lag_up', 'ENSO_lag_bot','ENSO_lag_pv',\
-                 'PDO_lag_up', 'PDO_lag_bot','PDO_lag_pv','NAO_lag_up', 'NAO_lag_bot', 'NAO_lag_pv',\
+        df_teles['limit'] = ['ENSO_up', 'ENSO_bot','ENSO_pv','ENSO_lw',\
+                 'PDO_up', 'PDO_bot','PDO_pv', 'PDO_lw','NAO_up', 'NAO_bot', 'NAO_pv', 'NAO_lw',\
+                 'AMO_up', 'AMO_bot','AMO_pv','AMO_lw',\
+                 'ENSO_lag_up', 'ENSO_lag_bot','ENSO_lag_pv', 'ENSO_lag_lw',\
+                 'PDO_lag_up', 'PDO_lag_bot','PDO_lag_pv', 'PDO_lag_lw', 'NAO_lag_up',
+                 'NAO_lag_bot', 'NAO_lag_pv', 'NAO_lag_lw',\
                  'Unex_up', 'Unex_bot']
         
         preds = ['ENSO','PDO','NAO', 'AMO', 'ENSO_lag','PDO_lag','NAO_lag']
@@ -157,10 +158,13 @@ for i in range(1):
                 if tel_pv[p+'pval_'+shortage[shor]].values[0]<0.1:
                     
                     alpha = 'k'
+                    lw = 1.5
                 else:
                     alpha = 'w'
+                    lw = 0.
                     
                 df_teles.loc[df_teles['limit']==p+'_pv', tele_names[t]] = alpha
+                df_teles.loc[df_teles['limit']==p+'_lw', tele_names[t]] = lw
                 
         
         for unex in unex_order:
@@ -212,36 +216,39 @@ for i in range(1):
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_bot'])[0,1:][inds[r]], color = 'steelblue',
-        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_pv'])[0,1:][inds[r]], linewidth = 1.)
+        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lw'])[0,1:][inds[r]])
+        
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_bot'])[0,1:][inds[r]], color = 'steelblue',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_lw'])[0,1:][inds[r]])
         
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_bot'])[0,1:][inds[r]], color = 'gold', label = 'PDO',
-        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='PDO_pv'])[0,1:][inds[r]], linewidth = 1.)
+        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='PDO_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lw'])[0,1:][inds[r]])
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_bot'])[0,1:][inds[r]], color = 'darkgray',
-         edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_pv'])[0,1:][inds[r]], label = 'NAO', linewidth = 1.)
-        
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='AMO_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_bot'])[0,1:][inds[r]], color = 'darkgreen',
-        label ='AMO', edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='AMO_pv'])[0,1:][inds[r]], linewidth = 1.)
-        
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_bot'])[0,1:][inds[r]], color = 'steelblue',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_pv'])[0,1:][inds[r]], linewidth = 1. )
-        
-        # f3_ax1.bar(np.array(x)[inds[r]], np.array(df_teles_a1[df_teles_a1['limit']=='AMO_up'])[0,1:][inds[r]], 
-        # bottom = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_bot'])[0,1:][inds[r]], color = 'mediumseagreen',
-        # width = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_pv'])[0,1:][inds[r]] )
-        
+        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_pv'])[0,1:][inds[r]], label = 'NAO',
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lw'])[0,1:][inds[r]])
+ 
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_bot'])[0,1:][inds[r]], color = 'gold',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_pv'])[0,1:][inds[r]] )
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_lw'])[0,1:][inds[r]])
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_bot'])[0,1:][inds[r]], color = 'darkgray',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_pv'])[0,1:][inds[r]] )
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_pv'])[0,1:][inds[r]],
+        linewidth=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_lw'])[0,1:][inds[r]] )
+        
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='AMO_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_bot'])[0,1:][inds[r]], color = 'darkgreen',
+        label ='AMO', edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='AMO_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_lw'])[0,1:][inds[r]])
         
         f3_ax1.bar(np.array(x), np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_up'])[0,1:].astype(float))[inds[r]], 
         bottom = np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_bot'])[0,1:].astype(float))[inds[r]], color = 'white', hatch='///', alpha =0.2, label = 'unexplained Trend')
@@ -318,7 +325,7 @@ for i in range(1):
         
         
 
-        f3_ax1.axhline(y=0,linewidth=0.3, color='k', linestyle = '-', alpha = 0.5)
+        f3_ax1.axhline(y=0,linewidth=0.6, color='k', linestyle = '-')
         # f3_ax2.axvline(x=3,linewidth=0.3, color='k', linestyle = '-', alpha = 0.5)
         
         
@@ -326,7 +333,7 @@ for i in range(1):
         
         
         if r ==0 :
-            f3_ax1.set_ylabel('Rel. coefs $\\alpha$ in $D_{1980}$',  fontsize = 10, labelpad=+1)
+            f3_ax1.set_ylabel('Contribution to D$_{1980}$ ($\\gamma$)',  fontsize = 9, labelpad=+1)
             
 
         
@@ -363,11 +370,7 @@ for i in range(1):
             z = z+3
         #f3_ax2 = fig3.add_subplot(gs[5*i+2:5*i+4,j*5:(j*5)+4])
 
-        
-        
-        
-            
-            
+
 
         data_attr_reg = DATA_ATTR_Full[DATA_ATTR_Full['Region'] == regions[r]]
         data_attr_reg_pos = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_Pos']
@@ -398,11 +401,12 @@ for i in range(1):
                               
         tele_names = ['tele_pos', 'tele', 'tele_neg']
         
-        df_teles['limit'] = ['ENSO_up', 'ENSO_bot','ENSO_pv',\
-                 'PDO_up', 'PDO_bot','PDO_pv','NAO_up', 'NAO_bot', 'NAO_pv',\
-                 'GMT_up', 'GMT_bot','GMT_pv',\
-                 'ENSO_lag_up', 'ENSO_lag_bot','ENSO_lag_pv',\
-                 'PDO_lag_up', 'PDO_lag_bot','PDO_lag_pv','NAO_lag_up', 'NAO_lag_bot', 'NAO_lag_pv',\
+        df_teles['limit'] = ['ENSO_up', 'ENSO_bot','ENSO_pv','ENSO_lw',\
+                 'PDO_up', 'PDO_bot','PDO_pv', 'PDO_lw','NAO_up', 'NAO_bot', 'NAO_pv', 'NAO_lw',\
+                 'GMT_up', 'GMT_bot','GMT_pv', 'GMT_lw',\
+                 'ENSO_lag_up', 'ENSO_lag_bot','ENSO_lag_pv', 'ENSO_lag_lw',\
+                 'PDO_lag_up', 'PDO_lag_bot','PDO_lag_pv', 'PDO_lag_lw', 'NAO_lag_up',
+                 'NAO_lag_bot', 'NAO_lag_pv', 'NAO_lag_lw',\
                  'Unex_up', 'Unex_bot']
         
         preds = ['ENSO','PDO','NAO', 'GMT', 'ENSO_lag','PDO_lag','NAO_lag']
@@ -442,13 +446,14 @@ for i in range(1):
             for p in preds:
                 
                 if tel_pv[p+'pval_'+shortage[shor]].values[0]<0.1:
-                    
+                    lw = 1.5
                     alpha = 'k'
                 else:
                     alpha = 'w'
+                    lw = 0.
                     
                 df_teles.loc[df_teles['limit']==p+'_pv', tele_names[t]] = alpha
-                
+                df_teles.loc[df_teles['limit']==p+'_lw', tele_names[t]] = lw
         
         for unex in unex_order:
             
@@ -489,46 +494,62 @@ for i in range(1):
         
         df_teles_a1 = df_teles.iloc[:,0:4]
         
+        
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_bot'])[0,1:][inds[r]], color = 'darkgray',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_lw'])[0,1:][inds[r]])
+        
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_bot'])[0,1:][inds[r]], color = 'steelblue',
-        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_pv'])[0,1:][inds[r]], linewidth = 1.)
+        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lw'])[0,1:][inds[r]])
+        
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_bot'])[0,1:][inds[r]], color = 'steelblue',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_lw'])[0,1:][inds[r]])
+        
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_bot'])[0,1:][inds[r]], color = 'darkgray',
+        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_pv'])[0,1:][inds[r]], label = 'NAO', 
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lw'])[0,1:][inds[r]])
+        
         
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_bot'])[0,1:][inds[r]], color = 'gold', label = 'PDO',
-        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='PDO_pv'])[0,1:][inds[r]], linewidth = 1.)
+        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='PDO_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lw'])[0,1:][inds[r]])
         
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_bot'])[0,1:][inds[r]], color = 'darkgray',
-        edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_pv'])[0,1:][inds[r]], label = 'NAO', linewidth = 1.)
+        
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='GMT_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='GMT_bot'])[0,1:][inds[r]], color = 'sandybrown',
-        label ='GMT', edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='GMT_pv'])[0,1:][inds[r]], linewidth = 1.)
-        
-        # f3_ax1.bar(np.array(x)[inds[r]], np.array(df_teles_a1[df_teles_a1['limit']=='AMO_up'])[0,1:][inds[r]], 
-        # bottom = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_bot'])[0,1:][inds[r]], color = 'mediumseagreen',
-        # label ='AMO', edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='AMO_pv'])[0,1:][inds[r]])
-        
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_bot'])[0,1:][inds[r]], color = 'steelblue',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_pv'])[0,1:][inds[r]] )
-        
-        # f3_ax1.bar(np.array(x)[inds[r]], np.array(df_teles_a1[df_teles_a1['limit']=='AMO_up'])[0,1:][inds[r]], 
-        # bottom = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_bot'])[0,1:][inds[r]], color = 'mediumseagreen',
-        # width = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_pv'])[0,1:][inds[r]] )
-        
+        label ='GMT', edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='GMT_pv'])[0,1:][inds[r]], 
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='GMT_lw'])[0,1:][inds[r]])
+
+
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_bot'])[0,1:][inds[r]], color = 'gold',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_pv'])[0,1:][inds[r]] )
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_lw'])[0,1:][inds[r]])
         
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_bot'])[0,1:][inds[r]], color = 'darkgray',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_pv'])[0,1:][inds[r]] )
+        
         
         
         f3_ax1.bar(np.array(x), np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_up'])[0,1:].astype(float))[inds[r]], 
         bottom = np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_bot'])[0,1:].astype(float))[inds[r]], color = 'white', hatch='///', alpha =0.2, label = 'unexplained Trend')
+        
+        if j ==4:
+            
+            y_0 = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_bot'])[0,1:][0]
+            
+            x_0_0 = 6/30
+            
+            x_0_1 = 14/30 
+            
+            f3_ax1.axhline(y_0, x_0_0, x_0_1,linewidth=1.5, color='k', linestyle = '-')
         
         handles, labels = f3_ax1.get_legend_handles_labels()
         
@@ -603,7 +624,7 @@ for i in range(1):
         
         
 
-        f3_ax1.axhline(y=0,linewidth=0.3, color='k', linestyle = '-', alpha = 0.5)
+        f3_ax1.axhline(y=0,linewidth=0.6, color='k', linestyle = '-')
         # f3_ax2.axvline(x=3,linewidth=0.3, color='k', linestyle = '-', alpha = 0.5)
         
         
@@ -611,7 +632,7 @@ for i in range(1):
         
         
         if r ==0 :
-            f3_ax1.set_ylabel('Rel. coefs $\\alpha$ in $D_{1980}$',  fontsize = 10, labelpad=+1)
+            f3_ax1.set_ylabel('Contribution to D$_{1980}$ ($\\gamma$)',  fontsize = 9, labelpad=+1)
             
 
         

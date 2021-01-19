@@ -161,29 +161,29 @@ for i in range(4):
         
         y2_sig= [h_pos108_sig,h108_sig,h_neg108_sig,h_pos107_sig,h107_sig,h_neg107_sig]
         
-        ax1_lims_up = [10,10,10,5,3,8,5,35,20,10]
+        ax1_lims_up = [10,10,10,10,5,8,5,35,20,16]
         
-        ax1_lims_low = [-6,-10,-5,-5.2,-3,-8,-5,-5,-10,-10]
+        ax1_lims_low = [-6,-10,-5,-9,-4,-8,-2,-5,-10,-7]
         
-        ax2_lims_up = [10,10,10,5,3,8,5,35,15,10]
+        ax2_lims_up = [10,10,10,7,5,8,5,35,20,15]
         
-        ax2_lims_low = [-6,-10,-5,-5,-3,-8,-5,-5,-10,-10]
+        ax2_lims_low = [-6,-10,-5,-9,-4,-8,-2,-5,-10,-7]
         
-        ax1_ticks_up = [5,5,5,2,2,5,2,20,10,5]
+        ax1_ticks_up = [5,5,5,4,2,5,2,20,10,5]
         
-        ax1_ticks_low = [-5,-5,-5,-2,-2,-5,-2,-5,-5,-5]
+        ax1_ticks_low = [-5,-5,-5,-4,-2,-5,-1,-5,-5,-3]
         
-        ax2_ticks_up = [5,5,5,2,2,5,2,20,10,5]
+        ax2_ticks_up = [5,5,5,4,2,5,2,20,10,5]
         
-        ax2_ticks_low = [-5,-5,-5,-2,-2,-5,-2,-5,-5, -5]
+        ax2_ticks_low = [-5,-5,-5,-4,-2,-5,-1,-5,-5, -3]
         
-        ax1_labels_up = ['5', '5','5','2','2','5', '2', '20','10','5']
+        ax1_labels_up = ['5', '5','5','4','2','5', '2', '20','10','5']
         
-        ax1_labels_low = ['-5','-5','-5','-2','-2','-5','-2','','-5','-5']
+        ax1_labels_low = ['-5','-5','-5','-4','-2','-5','-1','','-5','-3']
         
-        ax2_labels_up = ['5','5','5','2','2', '5','2', '20','10','5']
+        ax2_labels_up = ['5','5','5','4','2', '5','2', '20','10','5']
         
-        ax2_labels_low = ['-5','-5','-5','-2','-2','-5','-2','','-5','-5']
+        ax2_labels_low = ['-5','-5','-5','-4','-2','-5','-1','','-5','-3']
         
         if r_lin_pos > 0.2:
         
@@ -284,8 +284,8 @@ for i in range(4):
         lab = [0,1,4,7]
         
         if r in lab:
-            f3_ax1.set_ylabel('$C_{1980}$ in %/year',  fontsize = 8, labelpad=-0.5)
-            f3_ax2.set_ylabel('$C_{2010}$',  fontsize = 8, labelpad=-0.5)
+            f3_ax1.set_ylabel('$C_{1980}$ in % per year',  fontsize = 7.5, labelpad=-0.5)
+            f3_ax2.set_ylabel('$C_{2010}$',  fontsize = 7.5, labelpad=-0.5)
             
         
         
@@ -296,13 +296,13 @@ for i in range(4):
         f3_ax2.axhline(y=0,linewidth=0.3, color='k', linestyle = '-')
         
         if (i == 1) and (j==1):
-            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7)
+            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7.5)
             
         elif (i == 2) and ((j ==0) or (j==1)):
             
             f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7.5)
         else:
-            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 9)
+            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7.5)
          
         
         r+=1
@@ -315,15 +315,13 @@ f3_ax4.axis('off')
 
 
 circle = Line2D([0], [0], marker='o', color='w', label='non-significant',
-                        markeredgecolor='gray', markersize=6)
+                        markeredgecolor='#4575b4', markersize=6)
 triangle = Line2D([0], [0], marker='^', color='w', label='significant at 10%',
-                        markerfacecolor='gray', markersize=8)
+                        markerfacecolor='#4575b4', markersize=8)
 square = Line2D([0], [0], marker='s', color='w', label='significant at 5%',
-                        markerfacecolor='gray', markersize=7)
+                        markerfacecolor='#4575b4', markersize=7)
 diam = Line2D([0], [0], marker='D', color='w', label='significant at 1%',
-                        markerfacecolor='gray', markersize=6.5)
-empty = Line2D([0], [0], marker='o', color='w', label='',
-                        markerfacecolor='white', markersize=8)
+                        markerfacecolor='#4575b4', markersize=6.5)
 
 # circ = mpatches.Circle((0.5,0.5), 1,facecolor='#5ab4ac')
 # sig1 = mpatches.Circle((0.5,0.5), 1,facecolor='#5ab4ac')
@@ -334,10 +332,10 @@ empty = Line2D([0], [0], marker='o', color='w', label='',
 #         'Region with negative \n discharge trend $R_{-}$']
         #'circ','sig1','sig2','sig3']
 
-f3_ax4.legend(handles = [diam, square,triangle,circle,empty], frameon=True, fontsize = 7, loc = 'center', edgecolor = 'k')  
+f3_ax4.legend(handles = [diam, square,triangle,circle], frameon=True, fontsize = 7, loc = 'center', edgecolor = 'k')  
 
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI8_Figure3_mod.png',bbox_inches = 'tight',dpi =600)
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI8_Figure3_mod.svg',bbox_inches = 'tight', format = 'svg')
+plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI8_Figure4_mod.png',bbox_inches = 'tight',dpi =600)
+plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Supplement/SI8_Figure4_mod.pdf',bbox_inches = 'tight', format = 'pdf')
 
 #f3_ax1.set_title('gs[0, :]')
 #f3_ax2 = fig3.add_subplot(gs[1, :-1])

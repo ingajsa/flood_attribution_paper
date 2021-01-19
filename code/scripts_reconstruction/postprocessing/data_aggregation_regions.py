@@ -3,8 +3,7 @@
 Spyder Editor
 
 This file aggregates multi-model flood damage output on country level 
-to regional model medians. Additional variables such as GDP, Pop, Capital Stock,
-GDP_pc and recorded damages are added.
+to regional model medians. Additionally recorde damage is added.
 """
 import numpy as np
 import pandas as pd
@@ -101,15 +100,15 @@ def func_median(x):
     median_model_damages_2010_0 = x['Imp2010_2y_0'].median()
     median_observed_damages = (x['natcat_flood_damages_2005_CPI']).mean()
 
-    one_third_quantile_flood_area = x['FloodedAreaFlopros'].quantile(0.3)  # 30
-    two_third_quantile_flood_area = x['FloodedAreaFlopros'].quantile(0.7)  # 70
-    one_third_quantile_model_damages = x['Impact_2y_Flopros'].quantile(0.3)
+    one_third_quantile_flood_area = x['FloodedAreaFlopros'].quantile(0.33)  # 30
+    two_third_quantile_flood_area = x['FloodedAreaFlopros'].quantile(0.66)  # 70
+    one_third_quantile_model_damages = x['Impact_2y_Flopros'].quantile(0.33)
     # 30
-    one_third_quantile_model_damages_1980flospros = x['ImpFix_2y_Flopros'].quantile(0.3)  # 30
-    one_third_quantile_model_damages_2010flospros = x['Imp2010_2y_Flopros'].quantile(0.3)
-    two_third_quantile_model_damages = x['Impact_2y_Flopros'].quantile(0.7)  # 70
-    two_third_quantile_model_damages_1980flospros = x['ImpFix_2y_Flopros'].quantile(0.7)  # 70
-    two_third_quantile_model_damages_2010flospros = x['Imp2010_2y_Flopros'].quantile(0.7)  # 70
+    one_third_quantile_model_damages_1980flospros = x['ImpFix_2y_Flopros'].quantile(0.33)  # 30
+    one_third_quantile_model_damages_2010flospros = x['Imp2010_2y_Flopros'].quantile(0.33)
+    two_third_quantile_model_damages = x['Impact_2y_Flopros'].quantile(0.66)  # 70
+    two_third_quantile_model_damages_1980flospros = x['ImpFix_2y_Flopros'].quantile(0.66)  # 70
+    two_third_quantile_model_damages_2010flospros = x['Imp2010_2y_Flopros'].quantile(0.33)  # 70
     flood_area_flospros = x['FloodedAreaFlopros'].median()
     flood_area_0 = x['FloodedArea0'].median()
     # flood_vol = x['FloodVol_Flopros'].median()
@@ -183,16 +182,17 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
     # provide dataset with observational data these need to be requested from Munich Re
     # the DataSet needs to be treated with the adjustment for 2005 PPP as done in 
     # /code/scripts_reconstruction/natcat_damages/flood_damage_conversion.ipynb
-    natcat = pd.read_excel('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/Input_PPP_conversion/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
+    natcat = pd.read_excel('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/'+
+                           'Input_PPP_conversion/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
     countries = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/supporting_data/final_country_list.csv')
     
     # asset rescaling to correct for the ssp transition and to convert GDP to capital stock
     # datasets can be generated with a separate code discribed in the readme.txt
     if gdp_resc:
         # here we need the files in /data/exposure_rescaling
-        resc_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/RescalingFactors_GDPobs_GDPjpnClean.csv')
+        resc_factors = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/resc_ssp_transition.csv')
         # cap_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/PostProcess_GDP2CapStock_cgdpoClean.csv')
-        cap_factors = pd.read_csv('/home/insauer/projects/Attribution/Floods/Data/Input_Data/PostProcess_GDP2CapStock_rgdpnaCleanRM.csv')
+        cap_factors = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/totalwealth_capital_stock_rescaling.csv')
 
     countries = list(set(megaDataFrame['Country']).intersection(countries.iloc[:, 0]))
     natcat_short = natcat.iloc[:,[4,7,8,9,13,12,11,21,20,25,29,33,-17,-3,-2,-1]] # selection of NatCat columns, containing all rows
@@ -360,6 +360,9 @@ def aggregate_new_region(dataFrame):
 
     dataFrame.loc[dataFrame['Country'] == 'RUS',
                   'Region'] = 'CAS'
+    
+    dataFrame.loc[dataFrame['Region'] == 'CHN',
+                  'Region'] = 'EAS'
 
     dataFrame.loc[(dataFrame['Region'] == 'CAR') |
                   (dataFrame['Region'] == 'LAS') |
@@ -367,22 +370,22 @@ def aggregate_new_region(dataFrame):
                   'Region'] = 'LAM'
 
     dataFrame.loc[(dataFrame['Region'] == 'NAF') |
-                  (dataFrame['Region'] == 'ARA'), 'Region'] = 'NAFARA'
+                  (dataFrame['Region'] == 'ARA'), 'Region'] = 'NAF'
 
     dataFrame.loc[(dataFrame['Region'] == 'SSA') |
-                  (dataFrame['Region'] == 'SAF'), 'Region'] = 'SSAF'
+                  (dataFrame['Region'] == 'SAF'), 'Region'] = 'SSA'
 
     dataFrame.loc[(dataFrame['Region'] == 'EUR') |
                   (dataFrame['Region'] == 'EUA'), 'Region'] = 'EUR'
 
     dataFrame.loc[(dataFrame['Region'] == 'SWA') |
                   (dataFrame['Region'] == 'SEA'),
-                  'Region'] = 'SWEA'
+                  'Region'] = 'SEA'
 
     dataFrame.loc[(dataFrame['Region'] == 'PIS1') |
                   (dataFrame['Region'] == 'PIS2') |
                   (dataFrame['Region'] == 'AUS'),
-                  'Region'] = 'AUS'
+                  'Region'] = 'OCE'
 
     return dataFrame
 
@@ -420,15 +423,15 @@ sort = ['Year', 'Country']
 years = np.arange(1971, 2012)
 
 # Columns used for region aggregation
-in_cols = ['Impact_2y_Flopros',
+in_cols = ['Impact_2y_Flopros',  # D_CliExp_raw
            'Impact_2y_0',
-           'ImpFix_2y_Flopros',
+           'ImpFix_2y_Flopros',  # D_1980_raw
            'ImpFix_2y_0',
-           'Imp2010_2y_Flopros',
+           'Imp2010_2y_Flopros',  # D_2010_raw
            'Imp2010_2y_0',
            'FloodedAreaFlopros',
            'FloodedArea0',
-           'natcat_flood_damages_2005_CPI']  
+           'natcat_flood_damages_2005_CPI']
 
 # groupby year and model...
 
@@ -437,7 +440,7 @@ in_cols = ['Impact_2y_Flopros',
 
 #Building one big data set with all the data from all model runs
 
-#assDataFrame = assemble_data_frame(path, sort, years)
+assDataFrame = assemble_data_frame(path, sort, years)
 # assDataFrame.rename(columns={"Impact_2yFlopros": "Impact_2y_Flopros",
 #                               "Impact_2y0": "Impact_2y_0",
 #                               'ImpFix_2yFlopros': 'ImpFix_2y_Flopros',
@@ -445,20 +448,22 @@ in_cols = ['Impact_2y_Flopros',
 #                               'ImpFix_2y0': 'ImpFix_2y_0',
 #                               'Imp2010_2y0': 'Imp2010_2y_0'}, inplace=True)
 # # adding additional data
-#assDataFrame = add_GDP_NatCat(assDataFrame, years, gdp_resc = True)
+assDataFrame = add_GDP_NatCat(assDataFrame, years, gdp_resc = True)
 # # storing giant dataframe containing all the data for all model runs
-#assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataRegions.csv', index=False)
+assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataRegions.csv', index=False)
 
 assDataFrame = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataRegions.csv')
 
 #  rename regions
 assDataFrame = aggregate_new_region(assDataFrame)
 
-# aggregate all the country based data to regions
-regDataFrame = region_aggregation(in_cols, assDataFrame)
-#regDataFrame.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/RegionalAggregationDataRegions.csv', index=False)
+assDataFrame = assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/supplementary_data/assembled_data_regions.csv')
 
-#  building model median
+#aggregate all the country based data to regions
+regDataFrame = region_aggregation(in_cols, assDataFrame)
+regDataFrame.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/RegionalAggregationDataRegions.csv', index=False)
+
+# building model median
 modDataFrame = model_aggregation(in_cols, regDataFrame, years, None)
 
 modDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/ModelMedianRegions.csv', index=False)

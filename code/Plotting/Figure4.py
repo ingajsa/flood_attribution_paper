@@ -279,8 +279,8 @@ for i in range(4):
         lab = [0,1,4,7]
         
         if r in lab:
-            f3_ax1.set_ylabel('$C_{1980}$ in %/year',  fontsize = 8, labelpad=-0.5)
-            f3_ax2.set_ylabel('$C_{2010}$',  fontsize = 8, labelpad=-0.5)
+            f3_ax1.set_ylabel('$C_{1980}$ in % per year',  fontsize = 7, labelpad=-0.5)
+            f3_ax2.set_ylabel('$C_{2010}$',  fontsize = 7, labelpad=-0.5)
             
         
         

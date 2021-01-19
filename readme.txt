@@ -96,7 +96,7 @@ Installation requirements and instructions are provided in the corresponding doc
 In order to run the model, spatially explicit flooded fractions and flood depth provided by the ISIMIP2a
 simulation round are required, these data are available under:
 
-https://files.isimip.org/cama-flood/results/isimip2a/gev/
+10.5281/zenodo.4446364
 
 The script "schedule_runs.py"  in /code/scripts_reconstruction/run_climada/ a modeling run for each
 climate forcing-GHM combination and calls the simulation script "schedule_sim.py". In "schedule_runs.py"
@@ -107,10 +107,10 @@ combination of climate forcing and GHM, see scripts in
 
 /code/scripts_reconstruction/run_climada/
 
-The nomenclature of the files in https://files.isimip.org/cama-flood/results/isimip2a/ is extensively
+The nomenclature of the files in 10.5281/zenodo.4446364 is
 described here:
 
-https://github.com/CLIMADA-project/climada_python/blob/main/doc/tutorial/climada_hazard_RiverFlood.ipynb
+https://github.com/ingajsa/flood_attribution_paper/blob/main/code/Demo/Demo_Scripts/demo_climada_damage_generation.ipynb
 
 The output of "schedule_sim.py" are 46 .csv files containing damage-time series for each country between 1971-2010.
 
@@ -158,7 +158,7 @@ The two data sets generated during the attribution assessment are used as inputs
 and 'teleconnections_subregions.py'. Climate Oscillation Indices need to be added and are available under:
 Southern Oscillation Index as a predictor for ENSO (https://www.ncdc.noaa.gov/teleconnections/enso/enso-tech.php)
 Monthly data for AMO, NAO and PDO were extracted from the NOAA/Climate Prediction Center
-(https://www.psl.noaa.gov/data/climateindices/list/).
+(https://www.psl.noaa.gov/data/climateindices/list/) they need to be centered and scaled prior to the analysis.
 
 
 3 PLOTTING

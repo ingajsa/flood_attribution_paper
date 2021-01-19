@@ -126,7 +126,7 @@ def rel_time_attr_MK(dataFrame71, disch):
     slopeNat = stats.theilslopes(dataFrame['natcat_damages_2005_CPI_{}'.format(disch)],
                                  alpha=0.1)
 
-    regN = [regNat.slope, regNat.p, slopeNat[2], slopeNat[3]]
+    regN = [slopeNat[0], regNat.p, slopeNat[2], slopeNat[3]]
 
     return regH, regHE, regF, regH7, regH107, regH10, regE, regE7, regV, regI, regN
 

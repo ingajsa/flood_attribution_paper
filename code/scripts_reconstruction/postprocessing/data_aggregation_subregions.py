@@ -116,29 +116,29 @@ def func_median(x):
     flood_vol_pos = x['FloodVolumePosFlopros'].median()
     flood_vol_neg = x['FloodVolumeNegFlopros'].median()
 
-    one_third_quantile_flood_area_pos = x['FloodedAreaPosFlopros'].quantile(0.3)  # 30
-    two_third_quantile_flood_area_pos = x['FloodedAreaPosFlopros'].quantile(0.7)  # 70
-    one_third_quantile_flood_area_neg = x['FloodedAreaNegFlopros'].quantile(0.3)  # 30
-    two_third_quantile_flood_area_neg = x['FloodedAreaNegFlopros'].quantile(0.7)  # 70
+    one_third_quantile_flood_area_pos = x['FloodedAreaPosFlopros'].quantile(0.33)  # 30
+    two_third_quantile_flood_area_pos = x['FloodedAreaPosFlopros'].quantile(0.66)  # 70
+    one_third_quantile_flood_area_neg = x['FloodedAreaNegFlopros'].quantile(0.33)  # 30
+    two_third_quantile_flood_area_neg = x['FloodedAreaNegFlopros'].quantile(0.66)  # 70
 
-    one_third_quantile_flood_vol_pos = x['FloodVolumePosFlopros'].quantile(0.3)  # 30
-    two_third_quantile_flood_vol_pos = x['FloodVolumePosFlopros'].quantile(0.7)  # 70
-    one_third_quantile_flood_vol_neg = x['FloodVolumeNegFlopros'].quantile(0.3)  # 30
-    two_third_quantile_flood_vol_neg = x['FloodVolumeNegFlopros'].quantile(0.7)  # 70
+    one_third_quantile_flood_vol_pos = x['FloodVolumePosFlopros'].quantile(0.33)  # 30
+    two_third_quantile_flood_vol_pos = x['FloodVolumePosFlopros'].quantile(0.66)  # 70
+    one_third_quantile_flood_vol_neg = x['FloodVolumeNegFlopros'].quantile(0.33)  # 30
+    two_third_quantile_flood_vol_neg = x['FloodVolumeNegFlopros'].quantile(0.66)  # 70
 
-    one_third_quantile_model_damages_pos = x['Impact_2yPosFlopros'].quantile(0.3)  # 30
-    two_third_quantile_model_damages_pos = x['Impact_2yPosFlopros'].quantile(0.7)
-    one_third_quantile_model_damages_neg = x['Impact_2yNegFlopros'].quantile(0.3)  # 30
-    two_third_quantile_model_damages_neg = x['Impact_2yNegFlopros'].quantile(0.7)
-    one_third_quantile_model_damages_1980_pos = x['ImpFix_2yPosFlopros'].quantile(0.3)  # 30
-    two_third_quantile_model_damages_1980_pos = x['ImpFix_2yPosFlopros'].quantile(0.7)  # 70
-    one_third_quantile_model_damages_1980_neg = x['ImpFix_2yNegFlopros'].quantile(0.3)  # 30
-    two_third_quantile_model_damages_1980_neg = x['ImpFix_2yNegFlopros'].quantile(0.7)  # 70
+    one_third_quantile_model_damages_pos = x['Impact_2yPosFlopros'].quantile(0.33)  # 30
+    two_third_quantile_model_damages_pos = x['Impact_2yPosFlopros'].quantile(0.66)
+    one_third_quantile_model_damages_neg = x['Impact_2yNegFlopros'].quantile(0.33)  # 30
+    two_third_quantile_model_damages_neg = x['Impact_2yNegFlopros'].quantile(0.66)
+    one_third_quantile_model_damages_1980_pos = x['ImpFix_2yPosFlopros'].quantile(0.33)  # 30
+    two_third_quantile_model_damages_1980_pos = x['ImpFix_2yPosFlopros'].quantile(0.66)  # 70
+    one_third_quantile_model_damages_1980_neg = x['ImpFix_2yNegFlopros'].quantile(0.33)  # 30
+    two_third_quantile_model_damages_1980_neg = x['ImpFix_2yNegFlopros'].quantile(0.66)  # 70
 
-    one_third_quantile_model_damages_2010_pos = x['Imp2010_2yPosFlopros'].quantile(0.3)  # 30
-    two_third_quantile_model_damages_2010_pos = x['Imp2010_2yPosFlopros'].quantile(0.7)  # 70
-    one_third_quantile_model_damages_2010_neg = x['Imp2010_2yNegFlopros'].quantile(0.3)  # 30
-    two_third_quantile_model_damages_2010_neg = x['Imp2010_2yNegFlopros'].quantile(0.7)  # 70
+    one_third_quantile_model_damages_2010_pos = x['Imp2010_2yPosFlopros'].quantile(0.33)  # 30
+    two_third_quantile_model_damages_2010_pos = x['Imp2010_2yPosFlopros'].quantile(0.66)  # 70
+    one_third_quantile_model_damages_2010_neg = x['Imp2010_2yNegFlopros'].quantile(0.33)  # 30
+    two_third_quantile_model_damages_2010_neg = x['Imp2010_2yNegFlopros'].quantile(0.66)  # 70
 
     # flood_vol = x['FloodVol_Flopros'].median()
     return pd.Series([median_model_damages_pos,
@@ -248,9 +248,9 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
     if gdp_resc:
         # here we need the files in /data/exposure_rescaling
         # asset rescaling to correct for the ssp transition
-        resc_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/RescalingFactors_GDPobs_GDPjpnClean.csv')
+        resc_factors = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/resc_ssp_transition.csv')
         # asset rescaling to convert to capital stock
-        cap_factors = pd.read_csv('/home/insauer/projects/NC_Submission/Data/capital_stock_rescaling/totalwealth_capital_stock_rescaling.csv')
+        cap_factors = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/totalwealth_capital_stock_rescaling.csv')
 
     countries = list(set(megaDataFrame['Country']).intersection(countries.iloc[:, 0]))
 
@@ -335,6 +335,9 @@ def aggregate_new_region(dataFrame):
     
     dataFrame.loc[dataFrame['Country'] == 'RUS',
                   'Region'] = 'CAS'
+    
+    dataFrame.loc[dataFrame['Region'] == 'CHN',
+                  'Region'] = 'EAS'
 
     dataFrame.loc[(dataFrame['Region'] == 'CAR') |
                   (dataFrame['Region'] == 'LAS') |
@@ -342,22 +345,22 @@ def aggregate_new_region(dataFrame):
                   'Region'] = 'LAM'
 
     dataFrame.loc[(dataFrame['Region'] == 'NAF') |
-                  (dataFrame['Region'] == 'ARA'), 'Region'] = 'NAFARA'
+                  (dataFrame['Region'] == 'ARA'), 'Region'] = 'NAF'
 
     dataFrame.loc[(dataFrame['Region'] == 'SSA') |
-                  (dataFrame['Region'] == 'SAF'), 'Region'] = 'SSAF'
+                  (dataFrame['Region'] == 'SAF'), 'Region'] = 'SSA'
 
     dataFrame.loc[(dataFrame['Region'] == 'EUR') |
                   (dataFrame['Region'] == 'EUA'), 'Region'] = 'EUR'
 
     dataFrame.loc[(dataFrame['Region'] == 'SWA') |
                   (dataFrame['Region'] == 'SEA'),
-                  'Region'] = 'SWEA'
+                  'Region'] = 'SEA'
 
     dataFrame.loc[(dataFrame['Region'] == 'PIS1') |
                   (dataFrame['Region'] == 'PIS2') |
                   (dataFrame['Region'] == 'AUS'),
-                  'Region'] = 'AUS'
+                  'Region'] = 'OCE'
 
     return dataFrame
 
@@ -471,18 +474,20 @@ in_cols = ['Impact_2yPosFlopros',
 
 # Put all different model outputs in one dataframe
 # and add GDP and NatCat Damages for each year and country
-assDataFrame = assemble_data_frame(path, years)
-assDataFrame = add_GDP_NatCat(assDataFrame, years, gdp_resc=True)
-assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataSubregions.csv', index=False)
+#assDataFrame = assemble_data_frame(path, years)
+#assDataFrame = add_GDP_NatCat(assDataFrame, years, gdp_resc=True)
+#assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataSubregions.csv', index=False)
 assDataFrame = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataSubregions.csv')
 
 #  rename regions
 assDataFrame = aggregate_new_region(assDataFrame)
 
+assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/supplementary_data/country_damages_R_neg_R_pos.csv', index=False)
+
 # aggregate all the country based data to regions
-regDataFrame = region_aggregation(in_cols, assDataFrame)
+#regDataFrame = region_aggregation(in_cols, assDataFrame)
 #regDataFrame.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/RegionalAggregationDataSubregions.csv', index=False)
 
 #  building model median
-modDataFrame = model_aggregation(in_cols, regDataFrame, years, None)
-modDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/ModelMedianSubregions.csv', index=False)
+# modDataFrame = model_aggregation(in_cols, regDataFrame, years, None)
+# modDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/ModelMedianSubregions.csv', index=False)
