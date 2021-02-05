@@ -213,10 +213,11 @@ region_result_metrics_R.csv and region_result_metrics_R_pos_R_neg.csv
 2.4 DRIVERS FOR CLIMATE-INDUCED TRENDS
 
 The two data sets generated during the attribution assessment are used as inputs for the scripts 'teleconnections_regions.py'
-and 'teleconnections_subregions.py'. Climate Oscillation Indices need to be added and are available under:
-Southern Oscillation Index as a predictor for ENSO (https://www.ncdc.noaa.gov/teleconnections/enso/enso-tech.php)
+and 'teleconnections_subregions.py' in code/scripts_reconstruction/teleconnections. Climate Oscillation Indices need to be added
+and are available under Southern Oscillation Index as a predictor for ENSO (https://www.ncdc.noaa.gov/teleconnections/enso/enso-tech.php)
 Monthly data for AMO, NAO and PDO were extracted from the NOAA/Climate Prediction Center
 (https://www.psl.noaa.gov/data/climateindices/list/) they need to be centered and scaled prior to the analysis.
+Scaled and centered input data can also be found in data/climate_oscillations/norm_oscillations_lag.csv.
 
 The output files provide the results included in Figure 5 and in Supplementary Data 1:
 region_result_metrics_R.csv and region_result_metrics_R_pos_R_neg.csv
