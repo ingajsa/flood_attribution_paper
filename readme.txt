@@ -2,7 +2,12 @@
 README 
 
 flood_attribution_paper
-code collection for the paper 10.21203/rs.3.rs-37259/v1
+code collection for the paper:
+
+Inga Sauer, Ronja Reese, Christian Otto et al. 
+Climate Signals in River Flood Damages Emerge under Sound Regional Disaggregation
+
+
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -21,6 +26,7 @@ pymannkendall
 statsmodels
 itertools
 mpl_toolkits
+astropy.convolution
 
 For the demo, we strongly recommend to install Jupyter-Notebook
 
@@ -171,8 +177,8 @@ In the first step, data is aggregated to regional/subregional level and across a
 aggregated to model-medians for each region/subregion are the output. Additionally, observed damages and country specific 
 indicators are added and aggregated. 
 'schedule_sim.py' script need to be accessed by both scripts: data_aggregation_regions.py and data_aggregation_subegions.py
-Alternatively the files from country_damages_multimodel_R.csv and country_damages_multimodel_R_pos_R_neg.csv can
-be used as an input. 
+Alternatively the files included in Supplementary Data 1 in country_damages_multimodel_R.csv and 
+country_damages_multimodel_R_pos_R_neg.csv can be used as an input. 
 
 
 Note: The scripts code/scripts_reconstruction/postprocessing/data_aggregation_regions.py and
@@ -200,8 +206,9 @@ and correlation.
 
 The TimeSeries output is then used as an input for the scripts 'attributionRegions.py' and 'attributionSubregions.py'.
 The Scripts again produce TimeSeries and MetaData which can than used to produce the Plots 2,3 and 4.
-Both data sets serve as input for the detection of teleconnections. MetaData contains climate (H), exposure (E) and 
-vulnerability (V) contributions as well as modeled (M) and observed trend (N) as well as significances.
+Both data sets serve as input for the detection of teleconnections. MetaData and TimeSeries contain the results also
+provided in the files  of Supplementary Data 1:
+region_result_metrics_R.csv and region_result_metrics_R_pos_R_neg.csv
 
 2.4 DRIVERS FOR CLIMATE-INDUCED TRENDS
 
@@ -211,6 +218,8 @@ Southern Oscillation Index as a predictor for ENSO (https://www.ncdc.noaa.gov/te
 Monthly data for AMO, NAO and PDO were extracted from the NOAA/Climate Prediction Center
 (https://www.psl.noaa.gov/data/climateindices/list/) they need to be centered and scaled prior to the analysis.
 
+The output files provide the results included in Figure 5 and in Supplementary Data 1:
+region_result_metrics_R.csv and region_result_metrics_R_pos_R_neg.csv
 
 3 PLOTTING
 
