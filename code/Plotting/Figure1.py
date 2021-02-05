@@ -5,44 +5,25 @@ Created on Wed Sep  9 12:49:30 2020
 
 @author: insauer
 """
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec  5 22:09:32 2019
-
-@author: insauer
-"""
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
-
 import numpy as np
 import xarray as xr
-import matplotlib.pyplot as plt
-import cartopy
-import cartopy.io.shapereader as shpreader
-import cartopy.crs as ccrs
+from mpl_toolkits.basemap import Basemap
 import pandas as pd
-import netCDF4 as nc4
 import matplotlib.patches as mpatches
 
-def smooth():
-    return
-    
+"""Script to reproduce main Figure 1!"""
 
-sig = '/home/insauer/projects/RiverDischarge/Data/TrendsMedianDischarge_MK_pval.nc'
-disch= '/home/insauer/projects/RiverDischarge/Data/TrendsMedianDischarge_MK.nc'
+disch = '../../data/hazard_settings/trends_discharge.nc'
 
-dis_bin = '/home/insauer/projects/RiverDischarge/Data/basin_trends_geo.nc'
+dis_bin = '../../data/hazard_settings/basin_trends.nc'
 
-natcat_id = '/home/insauer/projects/RiverDischarge/Data/NatID_0_25.nc'
+# files can be obtained from CLIMADA
+natcat_id = '../../data/downloads/climada_python/data/system/NatID_grid_0150as.nc'
+reg_frame = pd.read_csv('../../data/downloads/climada_python/data/system/NatRegIDs.csv')
 
-
-
-reg_frame = pd.read_csv('/home/insauer/Climada/climada_python/data/system/NatRegIDs.csv')
-
-reg_frame.loc[reg_frame['Reg_name']=='NAM', 'Reg_plot']= 509
-reg_frame.loc[reg_frame['Reg_name']=='CHN', 'Reg_plot']= 507
+reg_frame.loc[reg_frame['Reg_name'] == 'NAM', 'Reg_plot'] = 509
+reg_frame.loc[reg_frame['Reg_name'] == 'CHN', 'Reg_plot'] = 507
 reg_frame.loc[(reg_frame['Reg_name']=='EUR') |
               (reg_frame['Reg_name']=='EUA')
               , 'Reg_plot']= 505
@@ -74,15 +55,13 @@ file = xr.open_dataset(disch)
 lat  = file.lat.data
 lon  = file.lon.data
 
-#data = file.variables['p-value'][0,:,:]
-#p-value =1
 data_dis =file.Discharge.data[0,:,:]
-#file.p-value[0,:,:].data
+
 file.close()
 
 
-fig = plt.figure(dpi=600)
-fig.subplots_adjust(left=0.5, hspace = -0.2, wspace = 0.05)
+fig = plt.figure(figsize = [7., 7.], dpi=600)
+fig.subplots_adjust(left=0.15, hspace = 0.1, wspace = 0.02)
 
 
 
@@ -96,19 +75,20 @@ m=Basemap(projection='mill',lat_ts=10,llcrnrlon=lon.min(), \
 x, y = m(*np.meshgrid(lon,lat))
 
 m.pcolormesh(x,y,data_dis,shading='flat',cmap=plt.cm.BrBG, vmin = -0.5, vmax = 0.5)
-#m.pcolormesh(x,y,data_dis,shading='flat',cmap=plt.cm.tab10)
+
 col = m.colorbar(location='right', size = 0.08)
-col.set_label('Trend in discharge $m^{3}$/s per year', fontsize = 4)
-col.ax.tick_params(axis="y", length = 4, labelsize =4)
+col.set_label('Trend in discharge $m^{3}$/s per year', fontsize = 7)
+col.ax.tick_params(axis="y", length = 4, labelsize =6)
+
 # Add a coastline and axis values.
 
 m.drawcoastlines(linewidth=0.2)
-#m.drawcountries()
+
 m.drawmapboundary(fill_color= 'white')
 m.drawlsmask(ocean_color='aqua',lakes=True)
 
-m.drawparallels(np.arange(-90.,90.,30.),labels=[1,0,0,0],fontsize=4, linewidth=0.2)
-m.drawmeridians(np.arange(-180.,180.,60.),labels=[0,0,0,1], fontsize=4, linewidth=0.2)
+m.drawparallels(np.arange(-90.,90.,30.),labels=[1,0,0,0],fontsize=6, linewidth=0.5)
+m.drawmeridians(np.arange(-180.,180.,60.),labels=[0,0,0,1], fontsize=6, linewidth=0.5)
 
 
 nat_file = xr.open_dataset(natcat_id)
@@ -120,8 +100,8 @@ nat_grid =nat_file.NatIdGrid.data[:,:]
 
 nat_file.close()
 
-ax.text(-0.1, 0.95, 'a', transform=ax.transAxes, 
-            size=7, weight='bold')
+ax.text(-0.08, 0.95, 'a', transform=ax.transAxes, 
+            size=13, weight='bold')
 
 
 file = xr.open_dataset(dis_bin)
@@ -129,10 +109,8 @@ file = xr.open_dataset(dis_bin)
 lat  = file.lat.data
 lon  = file.lon.data
 
-#data = file.variables['p-value'][0,:,:]
-#p-value =1
 data_dis =file.basin_trend.data[0,:,:]
-#file.p-value[0,:,:].data
+
 file.close()
 
 data_dis[np.where(data_dis>0)]=0.2
@@ -152,72 +130,17 @@ sig_index = np.where(data_dis<500)
 
 data_dis[sig_index]+=501
 
-#file_sig = xr.open_dataset(sig)
-
-
-
-
-# file_sig = xr.open_dataset(sig)
-
-
-
-# data_sig =file_sig.pvalues.data[0,:,:]
-# #file.p-value[0,:,:].data
-# file_sig.close()
-
-
-
-#sig_index = np.where(data_sig<0.1)
-
 ax = fig.add_subplot(212)
+
 ax.set_anchor('W')
-#fig, axes = plt.subplots(2, 1)
-#ax = axes.flatten()[0]
-#plt.title("Trends (Binary) in discharge 1971-2010")
-#plt.subplots_adjust(wspace=0.2, hspace=0.08)
-# Miller projection:
+
 m=Basemap(projection='mill',lat_ts=10,llcrnrlon=lon.min(), \
   urcrnrlon=lon.max(),llcrnrlat=-60.,urcrnrlat=80., \
   resolution='c')
-    
+
+x, y = m(*np.meshgrid(lon, lat))
 
 
-#m.fillcontinents()
-
-# convert the lat/lon values to x/y projections.
-
-x, y = m(*np.meshgrid(lon,lat))
-
-
-
-# data_dis[np.where(data_dis>0)]=0.9
-# data_dis[np.where(data_dis<0)]=-1.15
-
-
-# data_dis[sig_index]*=1.5
-
-#f = nc4.Dataset('/home/insauer/projects/RiverDischarge/Data/Binary_Trends.nc','w', format='NETCDF4')
-#dis = xr.open_dataset(path)
-#lat = dis.lat.data
-#lon = dis.lon.data
-##lat = lat[lat_inds]
-##lon = lon[lon_inds]
-#
-#f.createDimension('lon', len(lon))
-#f.createDimension('lat', len(lat))
-#f.createDimension('time', None) 
-#time = f.createVariable('time', 'f8', ('time',))
-#longitude = f.createVariable('lon', 'f4', ('lon'))
-#latitude = f.createVariable('lat', 'f4', ('lat')) 
-#binary_trends = f.createVariable('binary_trends', 'f4', ('time','lat', 'lon'))
-##pval = f.createVariable('p-values', 'f4', ('time','lat', 'lon'))
-#longitude[:] = lon #The "[:]" at the end of the variable instance is necessary
-#latitude[:] = lat
-#binary_trends[0,:,:] = data_dis
-##pval[0,:,:] = p_values
-#f.close()
-# plot the field using the fast pcolormesh routine 
-# set the colormap to jet.
 vmax = np.nanmax(data_dis)
 vmin = np.nanmin(data_dis)
 
@@ -228,14 +151,6 @@ abs_max = np.max([np.abs(vmin),np.abs(vmax)])
 
 m.pcolormesh(x,y,data_dis,shading='flat',cmap=plt.cm.tab20b, vmin = 501, vmax = 511)
 
-
-
-
-
-
-
-#m.pcolormesh(x,y,data_dis,shading='flat',cmap=plt.cm.tab10)
-#col = m.colorbar(location='right', size = 0.08)
 
 # Add a coastline and axis values.
 
@@ -265,40 +180,40 @@ rgba_oce_d = cmap(0.02)
 rgba_oce_l = cmap(0.17)
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_dark, label ='NAM$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_light, label ='NAM$_{-}$')
-leg1 = plt.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.15, 0.62))  
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_light, label ='NAM_')
+leg1 = plt.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.15, 0.62))  
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_lam_d, label ='LAM$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_lam_l, label ='LAM$_{-}$')
-leg2 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.28, 0.32))  
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_lam_l, label ='LAM_')
+leg2 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.28, 0.32))  
  
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_weu_d, label ='EUR$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_weu_l, label ='EUR$_{-}$')
-leg3 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.47, 0.77))  
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_weu_l, label ='EUR_')
+leg3 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.47, 0.77))  
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_ssa_d, label ='SSA$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_ssa_l, label ='SSA$_{-}$')
-leg4 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.53, 0.35)) 
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_ssa_l, label ='SSA_')
+leg4 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.53, 0.35)) 
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_naf_d, label ='NAF$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_naf_l, label ='NAF$_{-}$')
-leg5 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.735, 0.455)) 
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_naf_l, label ='NAF_')
+leg5 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.735, 0.455)) 
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_weu_d, label ='SEA$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_weu_l, label ='SEA$_{-}$')
-leg6 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.8, 0.35)) 
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_weu_l, label ='SEA_')
+leg6 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.8, 0.35)) 
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_oce_d, label ='OCE$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_oce_l, label ='OCE$_{-}$')
-leg7 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.9, 0.15))
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_oce_l, label ='OCE_')
+leg7 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.9, 0.15))
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_ssa_d, label ='EAS$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_ssa_l, label ='EAS$_{-}$')
-leg8 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.95, 0.55))  
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_ssa_l, label ='EAS_')
+leg8 = ax.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.95, 0.55))  
 
 pos_box = mpatches.Rectangle((0, 0), 1,1, color=rgba_oce_d, label ='CAS$_{+}$')
-neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_oce_l, label ='CAS$_{-}$')
-plt.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 2.5,bbox_to_anchor=(0.9925, 0.67))
+neg_box = mpatches.Rectangle((0, 0), 1, 1, color=rgba_oce_l, label ='CAS_')
+plt.legend(handles = [pos_box, neg_box], frameon=False, fontsize = 5,bbox_to_anchor=(0.9925, 0.67))
 
 ax.add_artist(leg1)
 ax.add_artist(leg2)
@@ -309,7 +224,6 @@ ax.add_artist(leg6)
 ax.add_artist(leg7)
 ax.add_artist(leg8)
 
-ax.text(-0.1, 0.95, 'b', transform=ax.transAxes, 
-            size=7, weight = 'bold')
-#plt.savefig('/home/insauer/projects/Attribution/Floods/Plots/FinalPaper/PreliminaryPlots/Region_map.svg', bbox_inches = 'tight',format = 'svg')
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Mainfigures/Figure1.png',  bbox_inches = 'tight', resolution=600)
+ax.text(-0.08, 0.93, 'b', transform=ax.transAxes, 
+            size=13, weight = 'bold')
+plt.savefig('../../data/figures/Figure1.png',  bbox_inches = 'tight', resolution=600)

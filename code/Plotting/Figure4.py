@@ -1,5 +1,3 @@
-
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -14,40 +12,42 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.lines import Line2D
 
-fig3 = plt.figure(constrained_layout=True, figsize=(8.3, 11.7))
+"""Script to reproduce main Figure 4!"""
+
+fig3 = plt.figure(constrained_layout=True, figsize=(7., 9.9))
 gs = fig3.add_gridspec(20, 14)
 plt.subplots_adjust(wspace=-0.2, hspace=0)
 
 
-DATA_ATTR_Full = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AttributionMetaDataRegions.csv')
+DATA_ATTR_Full = pd.read_csv('../../data/reconstruction/attribution_MetaData_regions.csv')
 
-DATA_ATTR = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AttributionMetaDataSubregions.csv')
+DATA_ATTR = pd.read_csv('../../data/reconstruction/attribution_MetaData_subregions.csv')
 
-DATA_FIT_Full= pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/VulnerabilityAdjustmentMetaDataRegions.csv')
-DATA_FIT= pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/VulnerabilityAdjustmentMetaDataSubregions.csv')
+DATA_FIT_Full = pd.read_csv('../../data/reconstruction/vulnerability_adjustment_MetaData_regions.csv')
+DATA_FIT = pd.read_csv('../../data/reconstruction/vulnerability_adjustment_MetaData_subregions.csv')
 
 
 region_names={'GLB': 'Global (GLB)',
               'NAM':'North America (NAM)',
-              'CHN':'Eastern Asia (EAS)',
-              'AUS':'Oceania (OCE)',
+              'EAS':'Eastern Asia (EAS)',
+              'OCE':'Oceania (OCE)',
               'LAM':'Latin America (LAM)',
               'EUR':'Europe (EUR)',
               'CAS':'Central Asia (CAS)',
-              'SSAF':'South & Sub-Sahara Africa (SSA)',
-              'SWEA':'South & South-East Asia (SEA)', 
-              'NAFARA':'North Africa & Middle East (NAF)'
+              'SSA':'South & Sub-Sahara Africa (SSA)',
+              'SEA':'South & South-East Asia (SEA)', 
+              'NAF':'North Africa & Middle East (NAF)'
               }
 
 region_abs={'NAM':'NAM', 
           'LAM':'LAM', 
           'EUR':'WEU',
-          'NAFARA':'NAR',
-          'SSAF':'SSA',
+          'NAF':'NAR',
+          'SSA':'SSA',
           'CAS':'CAS',
-          'SWEA':'SEA', 
-          'CHN':'EAS', 
-          'AUS':'OCE',
+          'SEA':'SEA', 
+          'EAS':'EAS', 
+          'OCE':'OCE',
           'GLB': 'GLB'}
 
 regions = list(region_names)
@@ -68,80 +68,80 @@ for i in range(4):
 
  
         
-        r_lin = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'P_ExpVar_pred_observed'].sum()     
+        r_lin = DATA_FIT_Full.loc[DATA_FIT_Full['Region']==regions[r], 'R2_D_Full_D_Obs'].sum()     
 
-        r_lin_pos = DATA_FIT.loc[DATA_FIT['Region']==regions[r]+'_Pos', 'ExpVar_model_pred_observed'].sum()
-        r_lin_neg = DATA_FIT.loc[DATA_FIT['Region']==regions[r]+'_Neg', 'ExpVar_model_pred_observed'].sum()
+        r_lin_pos = DATA_FIT.loc[DATA_FIT['Region']==regions[r]+'_pos', 'R2_D_Full_D_Obs'].sum()
+        r_lin_neg = DATA_FIT.loc[DATA_FIT['Region']==regions[r]+'_neg', 'R2_D_Full_D_Obs'].sum()
         
         data_attr_reg = DATA_ATTR_Full[DATA_ATTR_Full['Region'] == regions[r]]
-        data_attr_reg_pos = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_Pos']
-        data_attr_reg_neg = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_Neg']
+        data_attr_reg_pos = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_pos']
+        data_attr_reg_neg = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_neg']
         
 
-        h7 = data_attr_reg.loc[:,'Change H7nCL'].sum()
-        h_pos7 =  data_attr_reg_pos.loc[:,'Change H7nCL'].sum()
-        h_neg7 =  data_attr_reg_neg.loc[:,'Change H7nCL'].sum()
+        h7 = data_attr_reg.loc[:,'C_1980_71'].sum()
+        h_pos7 =  data_attr_reg_pos.loc[:,'C_1980_71'].sum()
+        h_neg7 =  data_attr_reg_neg.loc[:,'C_1980_71'].sum()
         
-        h7_up = data_attr_reg.loc[:,'Change H7nCLup'].sum()
-        h_pos7_up =  data_attr_reg_pos.loc[:,'Change H7nCLup'].sum()
-        h_neg7_up =  data_attr_reg_neg.loc[:,'Change H7nCLup'].sum()
+        h7_up = data_attr_reg.loc[:,'C_1980_71up'].sum()
+        h_pos7_up =  data_attr_reg_pos.loc[:,'C_1980_71up'].sum()
+        h_neg7_up =  data_attr_reg_neg.loc[:,'C_1980_71up'].sum()
         
-        h7_bot = data_attr_reg.loc[:,'Change H7nCLbot'].sum()
-        h_pos7_bot =  data_attr_reg_pos.loc[:,'Change H7nCLbot'].sum()
-        h_neg7_bot =  data_attr_reg_neg.loc[:,'Change H7nCLbot'].sum()
+        h7_bot = data_attr_reg.loc[:,'C_1980_71bot'].sum()
+        h_pos7_bot =  data_attr_reg_pos.loc[:,'C_1980_71bot'].sum()
+        h_neg7_bot =  data_attr_reg_neg.loc[:,'C_1980_71bot'].sum()
         
         
-        h8 = data_attr_reg.loc[:,'Change HnCL'].sum()
-        h_pos8 =  data_attr_reg_pos.loc[:,'Change HnCL'].sum()
-        h_neg8 =  data_attr_reg_neg.loc[:,'Change HnCL'].sum()
+        h8 = data_attr_reg.loc[:,'C_1980_80'].sum()
+        h_pos8 =  data_attr_reg_pos.loc[:,'C_1980_80'].sum()
+        h_neg8 =  data_attr_reg_neg.loc[:,'C_1980_80'].sum()
         
-        h8_up = data_attr_reg.loc[:,'Change HnCLup'].sum()
-        h_pos8_up =  data_attr_reg_pos.loc[:,'Change HnCLup'].sum()
-        h_neg8_up =  data_attr_reg_neg.loc[:,'Change HnCLup'].sum()
+        h8_up = data_attr_reg.loc[:,'C_1980_80up'].sum()
+        h_pos8_up =  data_attr_reg_pos.loc[:,'C_1980_80up'].sum()
+        h_neg8_up =  data_attr_reg_neg.loc[:,'C_1980_80up'].sum()
         
-        h8_bot = data_attr_reg.loc[:,'Change HnCLbot'].sum()
-        h_pos8_bot =  data_attr_reg_pos.loc[:,'Change HnCLbot'].sum()
-        h_neg8_bot =  data_attr_reg_neg.loc[:,'Change HnCLbot'].sum()
+        h8_bot = data_attr_reg.loc[:,'C_1980_80bot'].sum()
+        h_pos8_bot =  data_attr_reg_pos.loc[:,'C_1980_80bot'].sum()
+        h_neg8_bot =  data_attr_reg_neg.loc[:,'C_1980_80bot'].sum()
         
-        h8_sig = data_attr_reg.loc[:,'Sign H'].sum()
-        h_pos8_sig =  data_attr_reg_pos.loc[:,'Sign H'].sum()
-        h_neg8_sig =  data_attr_reg_neg.loc[:,'Sign H'].sum()
+        h8_sig = data_attr_reg.loc[:,'p_val_C_1980_80'].sum()
+        h_pos8_sig =  data_attr_reg_pos.loc[:,'p_val_C_1980_80'].sum()
+        h_neg8_sig =  data_attr_reg_neg.loc[:,'p_val_C_1980_80'].sum()
         
-        h7_sig = data_attr_reg.loc[:,'Sign H7'].sum()
-        h_pos7_sig =  data_attr_reg_pos.loc[:,'Sign H7'].sum()
-        h_neg7_sig =  data_attr_reg_neg.loc[:,'Sign H7'].sum()
+        h7_sig = data_attr_reg.loc[:,'p_val_C_1980_71'].sum()
+        h_pos7_sig =  data_attr_reg_pos.loc[:,'p_val_C_1980_71'].sum()
+        h_neg7_sig =  data_attr_reg_neg.loc[:,'p_val_C_1980_71'].sum()
         
-        h107 = data_attr_reg.loc[:,'Change H107nCL'].sum()
-        h_pos107 =  data_attr_reg_pos.loc[:,'Change H107nCL'].sum()
-        h_neg107 =  data_attr_reg_neg.loc[:,'Change H107nCL'].sum()
+        h107 = data_attr_reg.loc[:,'C_2010_71'].sum()
+        h_pos107 =  data_attr_reg_pos.loc[:,'C_2010_71'].sum()
+        h_neg107 =  data_attr_reg_neg.loc[:,'C_2010_71'].sum()
         
-        h107_up = data_attr_reg.loc[:,'Change H107nCLup'].sum()
-        h_pos107_up =  data_attr_reg_pos.loc[:,'Change H107nCLup'].sum()
-        h_neg107_up =  data_attr_reg_neg.loc[:,'Change H107nCLup'].sum()
+        h107_up = data_attr_reg.loc[:,'C_2010_71up'].sum()
+        h_pos107_up =  data_attr_reg_pos.loc[:,'C_2010_71up'].sum()
+        h_neg107_up =  data_attr_reg_neg.loc[:,'C_2010_71up'].sum()
         
-        h107_bot = data_attr_reg.loc[:,'Change H107nCLbot'].sum()
-        h_pos107_bot =  data_attr_reg_pos.loc[:,'Change H107nCLbot'].sum()
-        h_neg107_bot =  data_attr_reg_neg.loc[:,'Change H107nCLbot'].sum()
+        h107_bot = data_attr_reg.loc[:,'C_2010_71bot'].sum()
+        h_pos107_bot =  data_attr_reg_pos.loc[:,'C_2010_71bot'].sum()
+        h_neg107_bot =  data_attr_reg_neg.loc[:,'C_2010_71bot'].sum()
         
-        h108 = data_attr_reg.loc[:,'Change H10nCL'].sum()
-        h_pos108 =  data_attr_reg_pos.loc[:,'Change H10nCL'].sum()
-        h_neg108 =  data_attr_reg_neg.loc[:,'Change H10nCL'].sum()
+        h108 = data_attr_reg.loc[:,'C_2010_80'].sum()
+        h_pos108 =  data_attr_reg_pos.loc[:,'C_2010_80'].sum()
+        h_neg108 =  data_attr_reg_neg.loc[:,'C_2010_80'].sum()
         
-        h108_up = data_attr_reg.loc[:,'Change H10nCLup'].sum()
-        h_pos108_up =  data_attr_reg_pos.loc[:,'Change H10nCLup'].sum()
-        h_neg108_up =  data_attr_reg_neg.loc[:,'Change H10nCLup'].sum()
+        h108_up = data_attr_reg.loc[:,'C_2010_80up'].sum()
+        h_pos108_up =  data_attr_reg_pos.loc[:,'C_2010_80up'].sum()
+        h_neg108_up =  data_attr_reg_neg.loc[:,'C_2010_80up'].sum()
         
-        h108_bot = data_attr_reg.loc[:,'Change H10nCLbot'].sum()
-        h_pos108_bot =  data_attr_reg_pos.loc[:,'Change H10nCLbot'].sum()
-        h_neg108_bot =  data_attr_reg_neg.loc[:,'Change H10nCLbot'].sum()
+        h108_bot = data_attr_reg.loc[:,'C_2010_80bot'].sum()
+        h_pos108_bot =  data_attr_reg_pos.loc[:,'C_2010_80bot'].sum()
+        h_neg108_bot =  data_attr_reg_neg.loc[:,'C_2010_80bot'].sum()
         
-        h108_sig = data_attr_reg.loc[:,'Sign H10'].sum()
-        h_pos108_sig =  data_attr_reg_pos.loc[:,'Sign H10'].sum()
-        h_neg108_sig =  data_attr_reg_neg.loc[:,'Sign H10'].sum()
+        h108_sig = data_attr_reg.loc[:,'p_val_C_2010_80'].sum()
+        h_pos108_sig =  data_attr_reg_pos.loc[:,'p_val_C_2010_80'].sum()
+        h_neg108_sig =  data_attr_reg_neg.loc[:,'p_val_C_2010_80'].sum()
         
-        h107_sig = data_attr_reg.loc[:,'Sign H107'].sum()
-        h_pos107_sig =  data_attr_reg_pos.loc[:,'Sign H107'].sum()
-        h_neg107_sig =  data_attr_reg_neg.loc[:,'Sign H107'].sum()
+        h107_sig = data_attr_reg.loc[:,'p_val_C_2010_71'].sum()
+        h_pos107_sig =  data_attr_reg_pos.loc[:,'p_val_C_2010_71'].sum()
+        h_neg107_sig =  data_attr_reg_neg.loc[:,'p_val_C_2010_71'].sum()
 
         x=[0,1,2,4,5,6]
         colour_code = ['#4575b4', '#4575b4', '#4575b4', '#4575b4', '#4575b4', '#4575b4']
@@ -180,7 +180,7 @@ for i in range(4):
         
         ax2_labels_low = ['-5%','-5%','-5%','-3%','-2%','-5%','-2%','','-5%','-5%']
         
-        if r_lin_pos > 0.2:
+        if r_lin_pos > 0.2*100:
         
             f3_ax1.axvspan(-1,0.5, facecolor='gainsboro')
             f3_ax2.axvspan(-1,0.5, facecolor='gainsboro')
@@ -188,13 +188,13 @@ for i in range(4):
             f3_ax2.axvspan(3,4.5, facecolor='gainsboro')
             #f3_ax2.axvspan(4, 9, facecolor='gainsboro')
             
-        if r_lin_neg > 0.2:
+        if r_lin_neg > 0.2*100:
             f3_ax1.axvspan(1.5,3., facecolor='gainsboro')
             f3_ax2.axvspan(1.5,3., facecolor='gainsboro')
             f3_ax1.axvspan(5.5,7., facecolor='gainsboro')
             f3_ax2.axvspan(5.5,7., facecolor='gainsboro')
             
-        if r_lin > 0.2:
+        if r_lin > 0.2*100:
             
             f3_ax1.axvspan(0.5,1.5, facecolor='gainsboro')
             f3_ax2.axvspan(0.5,1.5, facecolor='gainsboro')
@@ -241,29 +241,20 @@ for i in range(4):
                 else:
                     f3_ax2.errorbar(x[a],y2[a], color =colour_code[a], yerr=np.reshape(np.array([y2err_bot[a],y2err_up[a]]), (2,1)), ecolor=colour_code[a], fmt='o',mfc ='w')
                     
-   
-            # f3_ax1.axhline(y=0.85, xmin =0, xmax = 1/4,linewidth=0.5, color='white')
-            # f3_ax1.axhline(y=0.75, xmin =0, xmax = 1/4,linewidth=0.5, color='white')
-            # f3_ax1.axhline(y=0.85, xmin =1/2, xmax = 3/4,linewidth=0.5, color='white')
-            # f3_ax1.axhline(y=0.75, xmin =1/2, xmax = 3/4,linewidth=0.5, color='white')
-                    
-            
-        # y_max = f3_ax1.get_ylim()[1]*1.6
-        # y_min = f3_ax1.get_ylim()[0]*1.4
         
         f3_ax1.set_ylim(ax1_lims_low[r],ax1_lims_up[r])
         
         f3_ax1.set_yticks([ax1_ticks_low[r] , 0, ax1_ticks_up[r]])
         
-        f3_ax1.set_yticklabels([ax1_labels_low[r],'0', ax1_labels_up[r] ],fontsize =6.5)
+        f3_ax1.set_yticklabels([ax1_labels_low[r],'0', ax1_labels_up[r] ],fontsize =5.5)
         
         f3_ax2.set_ylim(ax2_lims_low[r],ax2_lims_up[r])
         
         f3_ax2.set_yticks([ax2_ticks_low[r] , 0, ax2_ticks_up[r]])
         
-        f3_ax2.set_yticklabels([ax2_labels_low[r],'0', ax2_labels_up[r] ],fontsize =6.5)
-    
-        
+        f3_ax2.set_yticklabels([ax2_labels_low[r],'0', ax2_labels_up[r] ],fontsize =5.5)
+        f3_ax1.tick_params(axis="y",length = 3, pad = 0.7)
+        f3_ax2.tick_params(axis="y",length = 3, pad = 0.7)
         f3_ax1.set_xlim(-1.,7)
         f3_ax2.set_xlim(-1.,7)
         
@@ -274,30 +265,28 @@ for i in range(4):
         
         f3_ax2.set_xticks([0,1,2,4,5,6])
         
-        f3_ax2.set_xticklabels(['$R_{+}$', '$R$', '$R_{-}$','$R_{+}$',  '$R$', '$R_{-}$'], fontsize = 8)
+        f3_ax2.set_xticklabels(['$R_{+}$', '$R$', '$R_{-}$','$R_{+}$',  '$R$', '$R_{-}$'], fontsize = 7)
         
         lab = [0,1,4,7]
         
         if r in lab:
-            f3_ax1.set_ylabel('$C_{1980}$ in % per year',  fontsize = 7, labelpad=-0.5)
-            f3_ax2.set_ylabel('$C_{2010}$',  fontsize = 7, labelpad=-0.5)
-            
-        
-        
-        f3_ax1.set_xlabel('1980-2010               1971-2010',  fontsize = 6.5, labelpad=-7)
+            f3_ax1.set_ylabel('$C_{1980}$ in % per year',  fontsize = 6.5, labelpad=0.1)
+            f3_ax2.set_ylabel('$C_{2010}$',  fontsize = 6.5, labelpad=0.1, )
+
+        f3_ax1.set_xlabel('1980-2010               1971-2010',  fontsize = 5.5, labelpad=-7)
         f3_ax1.xaxis.set_label_position('top')
         #f3_ax2.axhline(y=-5,linewidth=0.2, color='k', linestyle = '-.')
         f3_ax1.axhline(y=0,linewidth=0.3, color='k', linestyle = '-')
         f3_ax2.axhline(y=0,linewidth=0.3, color='k', linestyle = '-')
         
         if (i == 1) and (j==1):
-            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7.5)
+            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7)
             
         elif (i == 2) and ((j ==0) or (j==1)):
             
-            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7.5)
+            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7)
         else:
-            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7.5)
+            f3_ax1.set_title(' '+ region_names[regions[r]], position = (0.5,1.), fontsize = 7)
          
         
         r+=1
@@ -309,35 +298,17 @@ f3_ax4.axis('off')
 
 
 circle = Line2D([0], [0], marker='o', color='w', label='non-significant',
-                        markeredgecolor='#4575b4', markersize=6)
+                        markeredgecolor='#4575b4', markersize=5.5)
 triangle = Line2D([0], [0], marker='^', color='w', label='significant at 10%',
-                        markerfacecolor='#4575b4', markersize=8)
-square = Line2D([0], [0], marker='s', color='w', label='significant at 5%',
-                        markerfacecolor='#4575b4', markersize=7)
-diam = Line2D([0], [0], marker='D', color='w', label='significant at 1%',
                         markerfacecolor='#4575b4', markersize=6.5)
+square = Line2D([0], [0], marker='s', color='w', label='significant at 5%',
+                        markerfacecolor='#4575b4', markersize=6)
+diam = Line2D([0], [0], marker='D', color='w', label='significant at 1%',
+                        markerfacecolor='#4575b4', markersize=5.5)
 
 
-# circ = mpatches.Circle((0.5,0.5), 1,facecolor='#5ab4ac')
-# sig1 = mpatches.Circle((0.5,0.5), 1,facecolor='#5ab4ac')
-# sig2 = mpatches.Circle((0.5,0.5), 1,facecolor='#5ab4ac')
-# sig3 = mpatches.Circle((0.5,0.5), 1,facecolor='#5ab4ac')
+f3_ax4.legend(handles = [diam, square,triangle,circle], frameon=True, fontsize = 6, loc = 'center', edgecolor = 'k')  
 
-# labels=['Region with positive \n discharge trend $R_{+}$','Full world region $R$',
-#         'Region with negative \n discharge trend $R_{-}$']
-        #'circ','sig1','sig2','sig3']
 
-f3_ax4.legend(handles = [diam, square,triangle,circle], frameon=True, fontsize = 7, loc = 'center', edgecolor = 'k')  
+plt.savefig('../../data/figures/Figure4.pdf',bbox_inches = 'tight', format = 'pdf')
 
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Mainfigures/Figure4.png',bbox_inches = 'tight',dpi =600)
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Mainfigures/Figure4.pdf',bbox_inches = 'tight', format = 'pdf')
-
-#f3_ax1.set_title('gs[0, :]')
-#f3_ax2 = fig3.add_subplot(gs[1, :-1])
-#f3_ax2.set_title('gs[1, :-1]')
-#f3_ax3 = fig3.add_subplot(gs[1:, -1])
-#f3_ax3.set_title('gs[1:, -1]')
-#f3_ax4 = fig3.add_subplot(gs[-1, 0])
-#f3_ax4.set_title('gs[-1, 0]')
-#f3_ax5 = fig3.add_subplot(gs[-1, -2])
-#f3_ax5.set_title('gs[-1, -2]')

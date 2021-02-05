@@ -20,7 +20,7 @@ pyts.decomposition.SingularSpectrumAnalysis
 pymannkendall
 statsmodels
 itertools
-astropy.convolution
+mpl_toolkits
 
 For the demo, we strongly recommend to install Jupyter-Notebook
 
@@ -63,7 +63,7 @@ should be worked through in the following order:
 
 4. demo_attribution_assessment.ipynb
 
-5. demo_teleconnetions.ipynb
+5. demo_teleconnections.ipynb
 
 Only for the first tutorial CLIMADA needs to be installed and its conda environment needs to be activated.
 Tutorials 2-5 can be run under any Python 3 environment and do not use CLIMADA. Alternatively,
@@ -73,7 +73,7 @@ second tutorial only
 Please note that only dummies are provided for observational data, as we have no rights to publish the data_sets.
 
 For the use of the demo data just start the jupyter-notebook 'demo_data_aggregation.ipynb' in DEMO_scripts and
-follow the instructions. Only the input data set provided at /code/Demo/Demo_Data/demo_assembled_data_subregions.csv
+follow the instructions. Only the input data set provided at /data/demo_data/demo_assembled_data_subregions.csv
 is needed. Further input is generated when the instructions are followed.
 
 ------------------------------------------------------------------------------------------------------------
@@ -91,36 +91,70 @@ CLIMADA available under:
 
 https://github.com/CLIMADA-project/climada_python
 
-Installation requirements and instructions are provided in the corresponding documentation.
+Installation requirements and instructions are provided in the corresponding documentation given at:
+
+https://climada-python.readthedocs.io/en/latest/guide/install.html
 
 In order to run the model, spatially explicit flooded fractions and flood depth provided by the ISIMIP2a
 simulation round are required, these data are available under:
 
-10.5281/zenodo.4446364
+https://zenodo.org/record/4446364#.YBvcweoo8Ys
+
+ISIMIP. (2021). source_data_flood_attribution [Data set]. Zenodo. http://doi.org/10.5281/zenodo.4446364
 
 The script "schedule_runs.py"  in /code/scripts_reconstruction/run_climada/ a modeling run for each
 climate forcing-GHM combination and calls the simulation script "schedule_sim.py". In "schedule_runs.py"
 all climate forcing datasets and GHMs are defined.
 
 The script calculates the flood damage for each country and every year and needs to be run for each
-combination of climate forcing and GHM, see scripts in
+combination of climate forcing and GHM, see scripts in:
 
-/code/scripts_reconstruction/run_climada/
+https://github.com/ingajsa/flood_attribution_paper/tree/main/code/scripts_reconstruction/run_climada
 
-The nomenclature of the files in 10.5281/zenodo.4446364 is
-described here:
+Besides the input files further input is required, these input files are either given in the 
+https://zenodo.org/record/4446364#.YBvcweoo8Ys or can be found on the github, this is described for
+each file loaded in this script:
 
-https://github.com/ingajsa/flood_attribution_paper/blob/main/code/Demo/Demo_Scripts/demo_climada_damage_generation.ipynb
+https://github.com/ingajsa/flood_attribution_paper/tree/main/code/scripts_reconstruction/run_climada/schedule_sim.py
 
 The output of "schedule_sim.py" are 46 .csv files containing damage-time series for each country between 1971-2010.
 
-The further data needed to run the scripts is provided in the data folder or can be generated with the help
+The data needed to run the scripts is provided in the data folder or can be generated with the help
 of the tutorial
 
 https://github.com/ingajsa/flood_attribution_paper/blob/main/code/Demo/Demo_Scripts/demo_climada_damage_generation.ipynb
 
-where links to the scripts needed for full reconstruction are provided.
+where links to the scripts and data needed for full reconstruction are provided.
 
+
+Note: the file required for the damage-basin assignment '/data/hazard_settings/basin_trends.nc'
+
+can be either used directly from the data folder or reproduced by running the scripts in 
+
+https://github.com/ingajsa/flood_attribution_paper/tree/main/code/scripts_reconstruction/basin_trend_assessment
+
+in the following order:
+
+1. discharge_median.sh 
+
+--> The script builds the median over the entire model ensemble for the annual maximum discharge. As input 
+    all files for the variable 'discharge' at http://doi.org/10.5281/zenodo.4446364 are required.
+
+2. dis_trend_estimation.py
+
+--> The script estimates the trend in annual maximum discharge 1971-2010 on the grid-level. The output
+    from 'discharge_median.sh' is required as input.
+
+3. basin_assignment.py
+
+--> The script assigns a general trend in maximum annual discharge to each of the river basins. As input the
+    output from script dis_trend_estimation.py is required and the shape files for river basins from 
+    https://www.bafg.de/GRDC/EN/02_srvcs/22_gslrs/223_WMO/wmo_regions_2020.html?nn=201570
+
+4. convert_basins2grid.py
+
+--> The script converts the general discharge trends of each river basin to the grid level. As input the
+    output files from dis_trend_estimation.py, basin_assignment.py and the basin shape files are required.
 
 2 POST-PROCESSING
 
@@ -135,8 +169,25 @@ the Ending '...subregions.py'
 
 In the first step, data is aggregated to regional/subregional level and across all model-runs, so damage time-series
 aggregated to model-medians for each region/subregion are the output. Additionally, observed damages and country specific 
-indicators are added and aggregated. For the aggregation all the output files of the 'schedule_runs.py' and the
+indicators are added and aggregated. 
 'schedule_sim.py' script need to be accessed by both scripts: data_aggregation_regions.py and data_aggregation_subegions.py
+Alternatively the files from country_damages_multimodel_R.csv and country_damages_multimodel_R_pos_R_neg.csv can
+be used as an input. 
+
+
+Note: The scripts code/scripts_reconstruction/postprocessing/data_aggregation_regions.py and
+code/scripts_reconstruction/postprocessing/data_aggregation_subregions.py require input data on observed damage,
+these need to be requested at Munich Re and treated with the script
+/code/scripts_reconstruction/natcat_damages/flood_damage_conversion.ipynb
+To assign these damages to subregions they need to be used as input in the script 
+/code/scripts_reconstruction/natcat_damages/record_assignment_basin.py and the output can be used in
+code/scripts_reconstruction/postprocessing/data_aggregation_subregions.py.
+
+For exposure rescaling the required files can be used from 
+/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/
+
+or reproduced with the script /code/scripts_reconstruction/exposure_rescaling/exp_rescaling.py
+
 
 2.2 VULNERABILITY ASSESSMENT
 

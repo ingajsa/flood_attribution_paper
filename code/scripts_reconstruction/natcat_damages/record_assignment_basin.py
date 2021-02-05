@@ -6,6 +6,9 @@ Created on Wed Jan 15 14:34:34 2020
 @author: insauer
 """
 
+"""This script assigns damage records to subregions. The input 
+"""
+
 import numpy as np
 import pandas as pd
 import sys
@@ -99,17 +102,19 @@ def find_dis_group(lon, lat, dis_pos, dis_neg):
 
 country_info = pd.read_csv(RIVER_FLOOD_REGIONS_CSV)
 
-dph_path = '/home/insauer/mnt/ebm/data/hazard/floods/isimip2a/gswp3/clm40/depth-150arcsec/flddph_annual_max_gev_0.1mmpd_protection-flopros.nc'
-frc_path = '/home/insauer/mnt/ebm/data/hazard/floods/isimip2a/gswp3/clm40/area-150arcsec/fldfrc_annual_max_gev_0.1mmpd_protection-flopros.nc'
+# insert any source file from flood modeling here just to get resolution
+
+dph_path = '../../../data/downloads/isimip_flood/flddph_150arcsec_clm40_gswp3_flopros.nc'
+frc_path = '../../../data/downloads/isimip_flood/fldfrc_150arcsec_clm40_gswp3_flopros.nc'
 
 
 isos = country_info['ISO'].tolist()
 
 #isos = ['BRB']
 
-natcat=pd.read_excel('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/Input_PPP_conversion/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
+natcat=pd.read_excel('../../../data/downloads/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
 
-trend_path = '/home/insauer/projects/RiverDischarge/Data/basin_trends_geo.nc'
+trend_path = '../../../data/hazard_settings/basin_trends.nc'
 
 #trend_path = '/home/insauer/projects/Attribution/Floods/Paper_NC_20_06_Data/Input_Damage_Assessment/TrendsMedianDischarge_MK.nc'
 
@@ -168,6 +173,6 @@ for iso in isos:
                 natcat_row.loc[0,'unclear_events'] += 1
         natcat_assigned= natcat_assigned.append(natcat_row,ignore_index=True)
     
-    natcat_assigned.to_csv('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/NatCat_PPP_conv/natcat_subregions.csv', index=False)
+    natcat_assigned.to_csv('../../../data/reconstruction/natcat_subregions.csv', index=False)
         
-natcat_assigned.to_csv('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/NatCat_PPP_conv/natcat_subregions.csv', index=False)
+natcat_assigned.to_csv('../../../data/reconstruction/natcat_subregions.csv', index=False)

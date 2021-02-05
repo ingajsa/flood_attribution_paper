@@ -21,24 +21,36 @@ from shapely.geometry import Point
 
 """This script provides the the overall discharge trend in each basin on the
    grid-level. The outputfile ~/data/hazard_settings/basin_trends.nc
-   is needed for the damage generation, see /code/scripts_reconstruction/run_climada/schedule_sim.py.
-"""
-
-Note that this script uses needs at least 7 threads to calculate the results, if other
+   is needed for the damage generation, see ../run_climada/schedule_sim.py.
+   Note that this script uses needs at least 7 threads to calculate the results, if other
    hardware restrictions are given please adjust this in line 104
-
-GDF = gpd.read_file('/home/insauer/projects/RiverDischarge/Data/river_basins/wmobb_basins.shp')
-# set outpufile from /code/scripts_reconstruction/basin_trend_assessment/basin_assignment.py here
-BASIN_TRENDS = pd.read_csv('~/data/repro/basin_assignment.csv')
-# set outpufile from /code/scripts_reconstruction/basin_trend_assessment/discharge_median.sh here
-DIS_PATH = '~/data/repro/trends_median_discharge.nc'
+"""
+# please download the basin shapefile from
+# https://www.bafg.de/GRDC/EN/02_srvcs/22_gslrs/223_WMO/wmo_regions_2020.html?nn=201570
+GDF = gpd.read_file('../../../data/downloads/wmobb_basins.shp')
+# set outpufile from basin_assignment.py here
+BASIN_TRENDS = pd.read_csv('../../../data/reconstruction/basin_assignment.csv')
+# set outpufile from discharge_median.sh here
+DIS_PATH = '../../../data/reconstruction/trends_discharge.nc'
 
 N_BASINS = GDF.count().max()
 
 def write_netCDF(geo_trends, lat_step, lon_step):
+    """
+    This function stores the results in a netCDF file.
+    Parameters
+    ----------
+    trends : np.array
+        slope of trend in discharge in each grid-cell
+    p_values : np.array
+        p-value of trend in discharge in each grid-cell
+    lat_step : int
+        distance used to sample the lat resolution
+    lon_step : TYPE
+        distance used to sample the lon resolution
+    """
 
-
-    f = nc4.Dataset('~/data/hazard_settings/basin_trends_repro.nc','w', format='NETCDF4')
+    f = nc4.Dataset('../../../data/reconstruction/basin_trends_repro.nc','w', format='NETCDF4')
 
     dis = xr.open_dataset(DIS_PATH)
     lat = dis.lat.data[::lat_step]
@@ -62,6 +74,24 @@ def write_netCDF(geo_trends, lat_step, lon_step):
 
 
 def get_trend(lat, lon):
+    """
+    This function reads the general trend in the basin (1,-1) and writes it to the grid-cell
+    Parameters
+    ----------
+    lat : TYPE
+        DESCRIPTION.
+    lon : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    geo_trend : int
+        discharge trend in the river-basin containing this grid-cell(1,-1)
+    bas_id : int
+        basin id
+
+    """
+    
     point = Point(lon, lat)
 
     geo_trend = np.nan
@@ -73,58 +103,71 @@ def get_trend(lat, lon):
             bas_id = GDF['WMOBB'].iloc[bas_idx]
             geo_trend = BASIN_TRENDS.loc[BASIN_TRENDS['WMOBB'] == bas_id, 'DIS_REG_GEO'].sum()
             break
-    return geo_trend
+
+    return geo_trend, bas_id
 
 
 def multip_function(x):
+    """This function reads the general trend in the river-basin and assigns it to the gridcell.
 
+    Parameters
+    ----------
+    x : tuple
+        lat, lon coordinates
+
+    Returns
+    -------
+    reg.slope
+        slope of the trend
+    reg.p
+        v-value of the trend
+    """
     lat, lon = x
 
     if (lat == -1000) or (lon == -1000):
         return np.nan, np.nan
     print(lon, lat)
 
-     geo_trend = get_trend(lat, lon)
+    geo_trend, bas_id = get_trend(lat, lon)
 
-    return geo_trend
+    return geo_trend, bas_id
+
 
 def main():
+    """Function generates coordinates the multicore processing and assignes gridcells to
+       different basin-groups with either positive or negative trends in annual max. discharge.
+       It finally calls the function to write the output file.
+    """
+    #  adjust number of threads here
     pooli = mp.Pool(7)
+    # to fasten the process larger steps can be taken...this produces an output of lower resolution
     lat_step = 1
     lon_step = 1
-    
-    
+
     lat_len = 720
     lon_len = 1440
-    
-    trend_lon = 1440
-    trend_lat = 720
+    trend_lon = int(lon_len/lon_step)
+    trend_lat = int(lat_len/lat_step)
 
-    
     dis = xr.open_dataset(DIS_PATH)
     lat = dis.lat.data
     lon = dis.lon.data
-    diai = dis.discharge[20, ::lat_step, ::lon_step].data
+    diai = dis.Discharge[0, ::lat_step, ::lon_step].data
     dis.close()
     mask = (np.isnan(diai)).flatten()
 
-
-    x_grid, y_grid = np.meshgrid(lon, lat)
+    x_grid, y_grid = np.meshgrid(lon[::lon_step], lat[::lat_step])
     x_grid = x_grid.flatten()
     y_grid = y_grid.flatten()
     x_grid[mask] = -1000
     y_grid[mask] = -1000
     a = pooli.map(multip_function, zip(y_grid, x_grid))
-    a = zip(*a)
+    a, b = zip(*a)
     a = np.array(a).reshape(trend_lat, trend_lon)
 
     geo_trends = a
 
-
-        
     write_netCDF(geo_trends, lat_step, lon_step)
-    
-    
 
     return
 

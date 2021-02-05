@@ -8,47 +8,45 @@ Created on Sat Feb 15 22:09:13 2020
 
 import numpy as np
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
-import cartopy
-import cartopy.io.shapereader as shpreader
-import cartopy.crs as ccrs
 import matplotlib.patches as mpatches
 
-fig3 = plt.figure(constrained_layout=True, figsize=(8.3, 11.7))
+"""Script to reproduce main Figure 5!"""
+
+fig3 = plt.figure(constrained_layout=True, figsize=(7.0, 8.8))
 gs = fig3.add_gridspec(19, 14)
 plt.subplots_adjust(wspace=0., hspace=0)
 
 
-DATA_ATTR_Full = pd.read_csv('/home/insauer/projects/Attribution/Floods/Paper_NC_Resubmission_data/Teleconnections/Lag_ENSO_GMT_PDO_NAO_Loo.csv')
+DATA_ATTR_Full = pd.read_csv('../../../data/reconstruction/ENSO_GMT_PDO_NAO_regions.csv')
 
-DATA_ATTR = pd.read_csv('/home/insauer/projects/Attribution/Floods/Paper_NC_Resubmission_data/Teleconnections/Lag_PosNeg_ENSO_PDO_NAO_GMT_Loo.csv')
+DATA_ATTR = pd.read_csv('../../../data/reconstruction/ENSO_GMT_PDO_NAO_subregions.csv')
 
-teleDataNorm = pd.read_csv('/home/insauer/projects/Attribution/Floods/Data/FinalPaper/TeleconnectionTest/tele_norm.csv')
+teleDataNorm = pd.read_csv('../../../data/climate_oscillations/norm_oscillations_lag.csv')
 
-AMO_DATA_ATTR_Full = pd.read_csv('/home/insauer/projects/Attribution/Floods/Paper_NC_Resubmission_data/Teleconnections/Lag_ENSO_AMO_PDO_NAO_Loo.csv')
+AMO_DATA_ATTR_Full = pd.read_csv('../../../data/reconstruction/ENSO_AMO_PDO_NAO_regions.csv')
 
-AMO_DATA_ATTR = pd.read_csv('/home/insauer/projects/Attribution/Floods/Paper_NC_Resubmission_data/Teleconnections/Lag_PosNeg_ENSO_AMO_PDO_NAO_Loo.csv')
+AMO_DATA_ATTR = pd.read_csv('../../data/reconstruction/ENSO_AMO_PDO_NAO_subregions.csv')
 
 region_names={ 'GLB': 'Global (GLB)',
               'NAM':'North America (NAM)',
-              'CHN':'Eastern Asia (EAS)',
-              'AUS':'Oceania (OCE)',
+              'EAS':'Eastern Asia (EAS)',
+              'OCE':'Oceania (OCE)',
               'LAM':'Latin America (LAM)',
               'EUR':'Europe (EUR)',
-              'SWEA':'South & South-East Asia (SEA)',
+              'SEA':'South & South-East Asia (SEA)',
               'CAS':'Central Asia & Russia (CAS)',
               }
 
 region_abs={'NAM':'NAM', 
           'LAM':'LAM', 
           'EUR':'EUR',
-          'NAFARA':'NAR',
-          'SSAF':'SSA',
+          'NAF':'NAR',
+          'SSA':'SSA',
           'CAS':'CAS',
-          'SWEA':'SEA', 
-          'CHN':'EAS', 
-          'AUS':'OCE',
+          'SEA':'SEA', 
+          'EAS':'EAS', 
+          'OCE':'OCE',
           'GLB': 'GLB'}
 
 regions = list(region_names)
@@ -81,24 +79,33 @@ for i in range(1):
 
 
         data_attr_reg = AMO_DATA_ATTR_Full[AMO_DATA_ATTR_Full['Region'] == regions[r]]
-        data_attr_reg_pos = AMO_DATA_ATTR[AMO_DATA_ATTR['Region'] == regions[r]+'_Pos']
-        data_attr_reg_neg = AMO_DATA_ATTR[AMO_DATA_ATTR['Region'] == regions[r]+'_Neg']
+        data_attr_reg_pos = AMO_DATA_ATTR[AMO_DATA_ATTR['Region'] == regions[r]+'_pos']
+        data_attr_reg_neg = AMO_DATA_ATTR[AMO_DATA_ATTR['Region'] == regions[r]+'_neg']
         
-        unexp = data_attr_reg[['Unexplained Haz']]
-        
-        unexp_pos = data_attr_reg_pos[['Unexplained Haz']]
-        
-        unexp_neg = data_attr_reg_neg[['Unexplained Haz']]
 
 
-        tele = data_attr_reg[['ENSOdv_','PDOdv_','NAOdv_', 'AMOdv_','ENSO_lagdv_','PDO_lagdv_','NAO_lagdv_']]
-        tele_pos =  data_attr_reg_pos[['ENSOdv_','PDOdv_','NAOdv_', 'AMOdv_','ENSO_lagdv_','PDO_lagdv_','NAO_lagdv_']]
-        tele_neg =  data_attr_reg_neg[['ENSOdv_','PDOdv_','NAOdv_', 'AMOdv_','ENSO_lagdv_','PDO_lagdv_','NAO_lagdv_']]
+        tele = data_attr_reg[['gammaAbs_ENSO_amo_run','gammaAbs_PDO_amo_run','gammaAbs_NAO_amo_run',
+                              'gammaAbs_AMO_amo_run','gammaAbs_ENSOlag_amo_run',
+                              'gammaAbs_PDOlag_amo_run','gammaAbs_NAOlag_amo_run']]
+        tele_pos =  data_attr_reg_pos[['gammaAbs_ENSO_amo_run','gammaAbs_PDO_amo_run','gammaAbs_NAO_amo_run',
+                                       'gammaAbs_AMO_amo_run','gammaAbs_ENSOlag_amo_run',
+                                       'gammaAbs_PDOlag_amo_run','gammaAbs_NAOlag_amo_run']]
+        tele_neg =  data_attr_reg_neg[['gammaAbs_ENSO_amo_run','gammaAbs_PDO_amo_run','gammaAbs_NAO_amo_run',
+                                       'gammaAbs_AMO_amo_run','gammaAbs_ENSOlag_amo_run',
+                                       'gammaAbs_PDOlag_amo_run','gammaAbs_NAOlag_amo_run']]
         
         
-        tele_pv = data_attr_reg[['ENSOpval_','PDOpval_','NAOpval_', 'AMOpval_','ENSO_lagpval_','PDO_lagpval_','NAO_lagpval_']]
-        tele_pos_pv =  data_attr_reg_pos[['ENSOpval_','PDOpval_','NAOpval_', 'AMOpval_','ENSO_lagpval_','PDO_lagpval_','NAO_lagpval_']]
-        tele_neg_pv =  data_attr_reg_neg[['ENSOpval_','PDOpval_','NAOpval_', 'AMOpval_','ENSO_lagpval_','PDO_lagpval_','NAO_lagpval_']]
+        tele_pv = data_attr_reg[['pval_ENSO_amo_run','pval_PDO_amo_run','pval_NAO_amo_run',
+                                 'pval_AMO_amo_run','pval_ENSOlag_amo_run','pval_PDOlag_amo_run',
+                                 'pval_NAOlag_amo_run']]
+        tele_pos_pv =  data_attr_reg_pos[['pval_ENSO_amo_run','pval_PDO_amo_run',
+                                          'pval_NAO_amo_run', 'pval_AMO_amo_run',
+                                          'pval_ENSOlag_amo_run','pval_PDOlag_amo_run',
+                                          'pval_NAOlag_amo_run']]
+        tele_neg_pv =  data_attr_reg_neg[['pval_ENSO_amo_run','pval_PDO_amo_run',
+                                          'pval_NAO_amo_run', 'pval_AMO_amo_run',
+                                          'pval_ENSOlag_amo_run','pval_PDOlag_amo_run',
+                                          'pval_NAOlag_amo_run']]
         
         
         
@@ -114,12 +121,11 @@ for i in range(1):
         df_teles['limit'] = ['ENSO_up', 'ENSO_bot','ENSO_pv','ENSO_lw',\
                  'PDO_up', 'PDO_bot','PDO_pv', 'PDO_lw','NAO_up', 'NAO_bot', 'NAO_pv', 'NAO_lw',\
                  'AMO_up', 'AMO_bot','AMO_pv','AMO_lw',\
-                 'ENSO_lag_up', 'ENSO_lag_bot','ENSO_lag_pv', 'ENSO_lag_lw',\
-                 'PDO_lag_up', 'PDO_lag_bot','PDO_lag_pv', 'PDO_lag_lw', 'NAO_lag_up',
-                 'NAO_lag_bot', 'NAO_lag_pv', 'NAO_lag_lw',\
-                 'Unex_up', 'Unex_bot']
+                 'ENSOlag_up', 'ENSOlag_bot','ENSOlag_pv', 'ENSOlag_lw',\
+                 'PDOlag_up', 'PDOlag_bot','PDOlag_pv', 'PDOlag_lw', 'NAOlag_up',
+                 'NAOlag_bot', 'NAOlag_pv', 'NAOlag_lw']
         
-        preds = ['ENSO','PDO','NAO', 'AMO', 'ENSO_lag','PDO_lag','NAO_lag']
+        preds = ['ENSO','PDO','NAO', 'AMO', 'ENSOlag','PDOlag','NAOlag']
         
         for t,tel in enumerate(tele_cons):
             
@@ -140,7 +146,6 @@ for i in range(1):
             
                 bottom += np.abs(perc[0,m])
                 
-        unex_order =  ['Unexplained Haz']
         t_iter = 0
         
         shortage=['']
@@ -155,7 +160,7 @@ for i in range(1):
             
             for p in preds:
                 
-                if tel_pv[p+'pval_'+shortage[shor]].values[0]<0.1:
+                if tel_pv['pval_{}_amo_run'.format(p)].values[0]<0.1:
                     
                     alpha = 'k'
                     lw = 1.5
@@ -165,28 +170,7 @@ for i in range(1):
                     
                 df_teles.loc[df_teles['limit']==p+'_pv', tele_names[t]] = alpha
                 df_teles.loc[df_teles['limit']==p+'_lw', tele_names[t]] = lw
-                
-        
-        for unex in unex_order:
-            
-            
-            if unexp_pos[unex].sum() >0:
-                df_teles.loc[df_teles['limit']=='Unex_up', tele_names[t_iter]] = 1
-                df_teles.loc[df_teles['limit']=='Unex_bot', tele_names[t_iter]] = 0
-            t_iter+=1
-            
-            if unexp[unex].sum() >0:
-                df_teles.loc[df_teles['limit']=='Unex_up', tele_names[t_iter]] = 1
-                df_teles.loc[df_teles['limit']=='Unex_bot', tele_names[t_iter]] = 0
-            
-            t_iter+=1
-            
-            if unexp_neg[unex].sum() >0:
-                df_teles.loc[df_teles['limit']=='Unex_up', tele_names[t_iter]] = 1
-                df_teles.loc[df_teles['limit']=='Unex_bot', tele_names[t_iter]] = 0
-            
-            t_iter+=1
-         
+
 
         inds= [[0,1],[1,2],[0,1,2],[1,2], [0,1], [1], [0],[0]]
         
@@ -219,10 +203,10 @@ for i in range(1):
         edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_pv'])[0,1:][inds[r]],
         linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lw'])[0,1:][inds[r]])
         
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_bot'])[0,1:][inds[r]], color = 'steelblue',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_pv'])[0,1:][inds[r]],
-        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_lw'])[0,1:][inds[r]])
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_bot'])[0,1:][inds[r]], color = 'steelblue',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_lw'])[0,1:][inds[r]])
         
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_up'])[0,1:][inds[r]], 
@@ -235,24 +219,22 @@ for i in range(1):
         edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_pv'])[0,1:][inds[r]], label = 'NAO',
         linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lw'])[0,1:][inds[r]])
  
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_bot'])[0,1:][inds[r]], color = 'gold',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_pv'])[0,1:][inds[r]],
-        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_lw'])[0,1:][inds[r]])
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_bot'])[0,1:][inds[r]], color = 'gold',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_lw'])[0,1:][inds[r]])
         
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_bot'])[0,1:][inds[r]], color = 'darkgray',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_pv'])[0,1:][inds[r]],
-        linewidth=np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_lw'])[0,1:][inds[r]] )
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_bot'])[0,1:][inds[r]], color = 'darkgray',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_pv'])[0,1:][inds[r]],
+        linewidth=np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_lw'])[0,1:][inds[r]] )
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='AMO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_bot'])[0,1:][inds[r]], color = 'darkgreen',
         label ='AMO', edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='AMO_pv'])[0,1:][inds[r]],
         linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='AMO_lw'])[0,1:][inds[r]])
         
-        f3_ax1.bar(np.array(x), np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_up'])[0,1:].astype(float))[inds[r]], 
-        bottom = np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_bot'])[0,1:].astype(float))[inds[r]], color = 'white', hatch='///', alpha =0.2, label = 'unexplained Trend')
-        
+
         handles, labels = f3_ax1.get_legend_handles_labels()
         
         ax1_lims_up = [1.4,1.4,1.4,1.4,1.4,1.4,1.4,1.4]
@@ -265,34 +247,34 @@ for i in range(1):
             
             f3_ax1.set_xticks([0,1])
             
-            f3_ax1.set_xticklabels([ '$R_{+}$', '$R$'], fontsize = 8)
+            f3_ax1.set_xticklabels([ '$R_{+}$', '$R$'], fontsize = 7)
             
         elif r == 2:
             f3_ax1.set_xlim(-1.,3)
             
             f3_ax1.set_xticks([0,1,2])
             
-            f3_ax1.set_xticklabels(['$R_{+}$', '$R$', '$R_{-}$'], fontsize = 8)
+            f3_ax1.set_xticklabels(['$R_{+}$', '$R$', '$R_{-}$'], fontsize = 7)
             
         elif r in [1,3]:
             f3_ax1.set_xlim(-1.,2)
             
             f3_ax1.set_xticks([0, 1])
             
-            f3_ax1.set_xticklabels([ '$R$', '$R_{-}$'], fontsize = 8)
+            f3_ax1.set_xticklabels([ '$R$', '$R_{-}$'], fontsize = 7)
         
         elif r ==5:
             f3_ax1.set_xlim(-1,1)
             
             f3_ax1.set_xticks([0])
             
-            f3_ax1.set_xticklabels([ '$R$'], fontsize = 8)
+            f3_ax1.set_xticklabels([ '$R$'], fontsize = 7)
         else:
             f3_ax1.set_xlim(-1,1)
             
             f3_ax1.set_xticks([0])
             
-            f3_ax1.set_xticklabels(['$R_{+}$'], fontsize = 8)
+            f3_ax1.set_xticklabels(['$R_{+}$'], fontsize = 7)
         
         ax1_ticks_up = [1,1,1,1,1,1,1,1]
         
@@ -302,11 +284,6 @@ for i in range(1):
         
         ax1_labels_low = ['-1','','','','','','','']
         
-        # ax2_labels_up = ['1','1','0.5','1','1', '1','0.5']
-        
-        # ax2_labels_low = ['-0.5','-1','-1','-1','-0.5','-0.5','-1']
-       
-        # f3_ax2.set_xlim(-1.,7)
         
         f3_ax1.set_ylim(ax1_lims_low[r],ax1_lims_up[r])
         
@@ -317,36 +294,22 @@ for i in range(1):
         if r==0 :
             f3_ax1.set_yticklabels([ax1_labels_low[r],'0', ax1_labels_up[r] ],fontsize =6)
         
-        # f3_ax2.set_ylim(ax2_lims_low[r],ax2_lims_up[r])
-        
-        # f3_ax2.set_yticks([ax2_ticks_low[r] , 0, ax2_ticks_up[r]])
-        
-        # f3_ax2.set_yticklabels([ax2_labels_low[r],'0', ax2_labels_up[r] ],fontsize =6)
-        
-        
 
         f3_ax1.axhline(y=0,linewidth=0.6, color='k', linestyle = '-')
-        # f3_ax2.axvline(x=3,linewidth=0.3, color='k', linestyle = '-', alpha = 0.5)
-        
-        
-        
-        
-        
-        if r ==0 :
-            f3_ax1.set_ylabel('Contribution to D$_{1980}$ ($\\gamma$)',  fontsize = 9, labelpad=+1)
-            
 
         
-        
-        f3_ax1.set_title(' '+ region_abs[regions[r]], position = (0.5,0.83), fontsize = 9)
+        if r ==0 :
+            f3_ax1.set_ylabel('Contribution to D$_{1980}$ ($\\gamma$)',  fontsize = 7, labelpad=+1)
+
+        f3_ax1.set_title(' '+ region_abs[regions[r]], position = (0.5,0.83), fontsize = 7)
             
         if r ==0:
         
-            f3_ax1.text(-0.55, 0.98, 'b', transform=f3_ax1.transAxes, 
-                size=13, weight='bold')
+            f3_ax1.text(-0.6, 0.98, 'b', transform=f3_ax1.transAxes, 
+                size=11, weight='bold')
             
-            f3_ax1.text(-0.55, 2.2, 'a', transform=f3_ax1.transAxes, 
-                size=13, weight='bold')
+            f3_ax1.text(-0.6, 2.2, 'a', transform=f3_ax1.transAxes, 
+                size=11, weight='bold')
        
         r+=1
 
@@ -373,24 +336,32 @@ for i in range(1):
 
 
         data_attr_reg = DATA_ATTR_Full[DATA_ATTR_Full['Region'] == regions[r]]
-        data_attr_reg_pos = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_Pos']
-        data_attr_reg_neg = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_Neg']
-        
-        unexp = data_attr_reg[['Unexplained Haz']]
-        
-        unexp_pos = data_attr_reg_pos[['Unexplained Haz']]
-        
-        unexp_neg = data_attr_reg_neg[['Unexplained Haz']]
+        data_attr_reg_pos = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_pos']
+        data_attr_reg_neg = DATA_ATTR[DATA_ATTR['Region'] == regions[r]+'_neg']
 
 
-        tele = data_attr_reg[['ENSOdv_','PDOdv_','NAOdv_', 'GMTdv_','ENSO_lagdv_','PDO_lagdv_','NAO_lagdv_']]
-        tele_pos =  data_attr_reg_pos[['ENSOdv_','PDOdv_','NAOdv_', 'GMTdv_','ENSO_lagdv_','PDO_lagdv_','NAO_lagdv_']]
-        tele_neg =  data_attr_reg_neg[['ENSOdv_','PDOdv_','NAOdv_', 'GMTdv_','ENSO_lagdv_','PDO_lagdv_','NAO_lagdv_']]
+        tele = data_attr_reg[['gammaAbs_ENSO_gmt_run','gammaAbs_PDO_gmt_run','gammaAbs_NAO_gmt_run',
+                              'gammaAbs_GMT_gmt_run','gammaAbs_ENSOlag_gmt_run',
+                              'gammaAbs_PDOlag_gmt_run','gammaAbs_NAOlag_gmt_run']]
+        tele_pos =  data_attr_reg_pos[['gammaAbs_ENSO_gmt_run','gammaAbs_PDO_gmt_run',
+                                       'gammaAbs_NAO_gmt_run', 'gammaAbs_GMT_gmt_run',
+                                       'gammaAbs_ENSOlag_gmt_run','gammaAbs_PDOlag_gmt_run',
+                                       'gammaAbs_NAOlag_gmt_run']]
+        tele_neg =  data_attr_reg_neg[['gammaAbs_ENSO_gmt_run','gammaAbs_PDO_gmt_run',
+                                       'gammaAbs_NAO_gmt_run', 'gammaAbs_GMT_gmt_run',
+                                       'gammaAbs_ENSOlag_gmt_run','gammaAbs_PDOlag_gmt_run',
+                                       'gammaAbs_NAOlag_gmt_run']]
         
         
-        tele_pv = data_attr_reg[['ENSOpval_','PDOpval_','NAOpval_', 'GMTpval_','ENSO_lagpval_','PDO_lagpval_','NAO_lagpval_']]
-        tele_pos_pv =  data_attr_reg_pos[['ENSOpval_','PDOpval_','NAOpval_', 'GMTpval_','ENSO_lagpval_','PDO_lagpval_','NAO_lagpval_']]
-        tele_neg_pv =  data_attr_reg_neg[['ENSOpval_','PDOpval_','NAOpval_', 'GMTpval_','ENSO_lagpval_','PDO_lagpval_','NAO_lagpval_']]
+        tele_pv = data_attr_reg[['pval_ENSO_gmt_run','pval_PDO_gmt_run','pval_NAO_gmt_run',
+                                 'pval_GMT_gmt_run','pval_ENSOlag_gmt_run','pval_PDOlag_gmt_run',
+                                 'pval_NAOlag_gmt_run']]
+        tele_pos_pv =  data_attr_reg_pos[['pval_ENSO_gmt_run','pval_PDO_gmt_run','pval_NAO_gmt_run',
+                                          'pval_GMT_gmt_run','pval_ENSOlag_gmt_run',
+                                          'pval_PDOlag_gmt_run','pval_NAOlag_gmt_run']]
+        tele_neg_pv =  data_attr_reg_neg[['pval_ENSO_gmt_run','pval_PDO_gmt_run','pval_NAO_gmt_run',
+                                          'pval_GMT_gmt_run','pval_ENSOlag_gmt_run',
+                                          'pval_PDOlag_gmt_run','pval_NAOlag_gmt_run']]
         
 
         tele_pv = [tele_pos_pv, tele_pv, tele_neg_pv]
@@ -402,14 +373,13 @@ for i in range(1):
         tele_names = ['tele_pos', 'tele', 'tele_neg']
         
         df_teles['limit'] = ['ENSO_up', 'ENSO_bot','ENSO_pv','ENSO_lw',\
-                 'PDO_up', 'PDO_bot','PDO_pv', 'PDO_lw','NAO_up', 'NAO_bot', 'NAO_pv', 'NAO_lw',\
-                 'GMT_up', 'GMT_bot','GMT_pv', 'GMT_lw',\
-                 'ENSO_lag_up', 'ENSO_lag_bot','ENSO_lag_pv', 'ENSO_lag_lw',\
-                 'PDO_lag_up', 'PDO_lag_bot','PDO_lag_pv', 'PDO_lag_lw', 'NAO_lag_up',
-                 'NAO_lag_bot', 'NAO_lag_pv', 'NAO_lag_lw',\
-                 'Unex_up', 'Unex_bot']
+                  'PDO_up', 'PDO_bot','PDO_pv', 'PDO_lw','NAO_up', 'NAO_bot', 'NAO_pv', 'NAO_lw',\
+                  'GMT_up', 'GMT_bot','GMT_pv', 'GMT_lw',\
+                  'ENSOlag_up', 'ENSOlag_bot','ENSOlag_pv', 'ENSOlag_lw',\
+                  'PDOlag_up', 'PDOlag_bot','PDOlag_pv', 'PDOlag_lw', 'NAOlag_up',
+                  'NAOlag_bot', 'NAOlag_pv', 'NAOlag_lw']
         
-        preds = ['ENSO','PDO','NAO', 'GMT', 'ENSO_lag','PDO_lag','NAO_lag']
+        preds = ['ENSO','PDO','NAO', 'GMT', 'ENSOlag','PDOlag','NAOlag']
         
         for t,tel in enumerate(tele_cons):
             
@@ -429,8 +399,7 @@ for i in range(1):
             
             
                 bottom += np.abs(perc[0,m])
-                
-        unex_order =  ['Unexplained Haz']
+
         t_iter = 0
         
         shortage=['']
@@ -445,7 +414,7 @@ for i in range(1):
             
             for p in preds:
                 
-                if tel_pv[p+'pval_'+shortage[shor]].values[0]<0.1:
+                if tel_pv['pval_{}_gmt_run'.format(p)].values[0]<0.1:
                     lw = 1.5
                     alpha = 'k'
                 else:
@@ -455,25 +424,7 @@ for i in range(1):
                 df_teles.loc[df_teles['limit']==p+'_pv', tele_names[t]] = alpha
                 df_teles.loc[df_teles['limit']==p+'_lw', tele_names[t]] = lw
         
-        for unex in unex_order:
-            
-            
-            if unexp_pos[unex].sum() >0:
-                df_teles.loc[df_teles['limit']=='Unex_up', tele_names[t_iter]] = 1
-                df_teles.loc[df_teles['limit']=='Unex_bot', tele_names[t_iter]] = 0
-            t_iter+=1
-            
-            if unexp[unex].sum() >0:
-                df_teles.loc[df_teles['limit']=='Unex_up', tele_names[t_iter]] = 1
-                df_teles.loc[df_teles['limit']=='Unex_bot', tele_names[t_iter]] = 0
-            
-            t_iter+=1
-            
-            if unexp_neg[unex].sum() >0:
-                df_teles.loc[df_teles['limit']=='Unex_up', tele_names[t_iter]] = 1
-                df_teles.loc[df_teles['limit']=='Unex_bot', tele_names[t_iter]] = 0
-            
-            t_iter+=1
+
          
 
         inds= [[0,1],[1,2],[0,1,2],[1,2], [0,1], [1], [0],[0]]
@@ -495,20 +446,20 @@ for i in range(1):
         df_teles_a1 = df_teles.iloc[:,0:4]
         
         
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_bot'])[0,1:][inds[r]], color = 'darkgray',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_pv'])[0,1:][inds[r]],
-        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_lag_lw'])[0,1:][inds[r]])
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_bot'])[0,1:][inds[r]], color = 'darkgray',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='NAOlag_lw'])[0,1:][inds[r]])
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_bot'])[0,1:][inds[r]], color = 'steelblue',
         edgecolor=np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_pv'])[0,1:][inds[r]],
         linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lw'])[0,1:][inds[r]])
         
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_bot'])[0,1:][inds[r]], color = 'steelblue',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_pv'])[0,1:][inds[r]],
-        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSO_lag_lw'])[0,1:][inds[r]])
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_bot'])[0,1:][inds[r]], color = 'steelblue',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='ENSOlag_lw'])[0,1:][inds[r]])
         
         f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='NAO_up'])[0,1:][inds[r]], 
         bottom = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_bot'])[0,1:][inds[r]], color = 'darkgray',
@@ -530,17 +481,11 @@ for i in range(1):
         linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='GMT_lw'])[0,1:][inds[r]])
 
 
-        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_up'])[0,1:][inds[r]], 
-        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_bot'])[0,1:][inds[r]], color = 'gold',
-        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_pv'])[0,1:][inds[r]],
-        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDO_lag_lw'])[0,1:][inds[r]])
-        
-        
-        
-        
-        f3_ax1.bar(np.array(x), np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_up'])[0,1:].astype(float))[inds[r]], 
-        bottom = np.nan_to_num(np.array(df_teles_a1[df_teles_a1['limit']=='Unex_bot'])[0,1:].astype(float))[inds[r]], color = 'white', hatch='///', alpha =0.2, label = 'unexplained Trend')
-        
+        f3_ax1.bar(np.array(x), np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_up'])[0,1:][inds[r]], 
+        bottom = np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_bot'])[0,1:][inds[r]], color = 'gold',
+        edgecolor = np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_pv'])[0,1:][inds[r]],
+        linewidth = np.array(df_teles_a1[df_teles_a1['limit']=='PDOlag_lw'])[0,1:][inds[r]])
+
         if j ==4:
             
             y_0 = np.array(df_teles_a1[df_teles_a1['limit']=='NAO_bot'])[0,1:][0]
@@ -563,34 +508,34 @@ for i in range(1):
             
             f3_ax1.set_xticks([0,1])
             
-            f3_ax1.set_xticklabels([ '$R_{+}$', '$R$'], fontsize = 8)
+            f3_ax1.set_xticklabels([ '$R_{+}$', '$R$'], fontsize = 7)
             
         elif r == 2:
             f3_ax1.set_xlim(-1.,3)
             
             f3_ax1.set_xticks([0,1,2])
             
-            f3_ax1.set_xticklabels(['$R_{+}$', '$R$', '$R_{-}$'], fontsize = 8)
+            f3_ax1.set_xticklabels(['$R_{+}$', '$R$', '$R_{-}$'], fontsize = 7)
             
         elif r in [1,3]:
             f3_ax1.set_xlim(-1.,2)
             
             f3_ax1.set_xticks([0, 1])
             
-            f3_ax1.set_xticklabels([ '$R$', '$R_{-}$'], fontsize = 8)
+            f3_ax1.set_xticklabels([ '$R$', '$R_{-}$'], fontsize = 7)
         
         elif r ==5:
             f3_ax1.set_xlim(-1,1)
             
             f3_ax1.set_xticks([0])
             
-            f3_ax1.set_xticklabels([ '$R$'], fontsize = 8)
+            f3_ax1.set_xticklabels([ '$R$'], fontsize = 7)
         else:
             f3_ax1.set_xlim(-1,1)
             
             f3_ax1.set_xticks([0])
             
-            f3_ax1.set_xticklabels(['$R_{+}$'], fontsize = 8)
+            f3_ax1.set_xticklabels(['$R_{+}$'], fontsize = 7)
             
         
         ax1_ticks_up = [1,1,1,1,1,1,1,1]
@@ -598,15 +543,12 @@ for i in range(1):
         ax1_ticks_low = [-1,-1,-1,-1,-1,-1,-1,-1]
         
         ax1_labels_up = ['1','','','','','', '','']
-        
+        #plt.legend()
+#plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Mainfigures/Figure5.png',bbox_inches = 'tight',dpi =600)
+
         ax1_labels_low = ['-1','','','','','','','']
         
-        # ax2_labels_up = ['1','1','0.5','1','1', '1','0.5']
-        
-        # ax2_labels_low = ['-0.5','-1','-1','-1','-0.5','-0.5','-1']
-       
-        # f3_ax2.set_xlim(-1.,7)
-        
+
         f3_ax1.set_ylim(ax1_lims_low[r],ax1_lims_up[r])
         
         f3_ax1.set_yticks([ax1_ticks_low[r] , 0, ax1_ticks_up[r]])
@@ -616,36 +558,20 @@ for i in range(1):
         if r==0 :
             f3_ax1.set_yticklabels([ax1_labels_low[r],'0', ax1_labels_up[r] ],fontsize =6)
         
-        # f3_ax2.set_ylim(ax2_lims_low[r],ax2_lims_up[r])
-        
-        # f3_ax2.set_yticks([ax2_ticks_low[r] , 0, ax2_ticks_up[r]])
-        
-        # f3_ax2.set_yticklabels([ax2_labels_low[r],'0', ax2_labels_up[r] ],fontsize =6)
-        
-        
 
         f3_ax1.axhline(y=0,linewidth=0.6, color='k', linestyle = '-')
-        # f3_ax2.axvline(x=3,linewidth=0.3, color='k', linestyle = '-', alpha = 0.5)
-        
-        
-        
-        
-        
-        if r ==0 :
-            f3_ax1.set_ylabel('Contribution to D$_{1980}$ ($\\gamma$)',  fontsize = 9, labelpad=+1)
-            
 
-        
-        
-        f3_ax1.set_title(' '+ region_abs[regions[r]], position = (0.5,0.83), fontsize = 9)
-            
+        if r ==0 :
+            f3_ax1.set_ylabel('Contribution to D$_{1980}$ ($\\gamma$)',  fontsize = 7, labelpad=+1)
+
+        f3_ax1.set_title(' '+ region_abs[regions[r]], position = (0.5,0.83), fontsize = 7)
+
         if r ==0:
-        
-            f3_ax1.text(-0.55, 0.98, 'c', transform=f3_ax1.transAxes, 
-                size=13, weight='bold')
-       
+
+            f3_ax1.text(-0.6, 0.98, 'c', transform=f3_ax1.transAxes, 
+                size=11, weight='bold')
         r+=1
-        
+
 
 
         
@@ -662,7 +588,7 @@ handles = [enso_box,pdo_box, nao_box,gmt_box, amo_box, sig_box]
 
 f3_ax2 = fig3.add_subplot(gs[0:3,z-14:z])
           
-f3_ax2.legend(handles,labels, frameon=True, fontsize = 8, loc = 'center right', edgecolor = 'k')
+f3_ax2.legend(handles,labels, frameon=True, fontsize = 7, loc = (0.72,-0.1), edgecolor = 'k')
 f3_ax2.axis('off')
 
 
@@ -687,13 +613,9 @@ f3_ax3.axhline(y=3,linewidth=0.3, color='k', linestyle = '-', alpha = 0.8)
 f3_ax3.axhline(y=4,linewidth=0.3, color='k', linestyle = '-', alpha = 0.8)
 f3_ax3.axvline(x=1971,linewidth=0.3, color='k', linestyle = '-', alpha = 0.8)
 f3_ax3.axvspan(1971,2010, facecolor='gainsboro')
-f3_ax3.set_ylabel('Normalized indices',  fontsize = 8, labelpad=+1)
-f3_ax3.set_xlabel('Time',  fontsize = 8, labelpad=+2)
+f3_ax3.set_ylabel('Normalized indices',  fontsize = 7, labelpad=+1)
+f3_ax3.set_xlabel('Year',  fontsize = 7, labelpad=+2)
 
 f3_ax3.tick_params(axis='both', labelsize=7)
-#plt.legend()
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Mainfigures/Figure5.png',bbox_inches = 'tight',dpi =600)
-plt.savefig('/home/insauer/projects/NC_Submission/Data/Figures/Mainfigures/Figure5.pdf',bbox_inches = 'tight', format = 'pdf')
-     
-   
-        
+
+plt.savefig('../../data/figures/Figure5.pdf',bbox_inches = 'tight', format = 'pdf')

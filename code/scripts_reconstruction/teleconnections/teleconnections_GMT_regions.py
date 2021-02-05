@@ -6,7 +6,7 @@ Created on Wed Apr 29 19:34:03 2020
 @author: insauer
 
 This script test damage time series on the influence of teleconnections and
-GMT. Tested are the teleconnections with ENSO, NAO, PDO and the effect of GMT or AMO.
+GMT. Tested are the teleconnections with ENSO, NAO, PDO and the effect of GMT.
 This script is for entire regions.
 
 """
@@ -20,13 +20,11 @@ from scipy.stats import shapiro
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 
-DATA_TS = pd.read_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/AttributionTimeSeriesRegions.csv')
-DATA_ATTR = pd.read_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/AttributionMetaDataRegions.csv')
+DATA_TS = pd.read_csv('../../../data/reconstruction/attribution_TimeSeries_regions.csv')
+DATA_ATTR = pd.read_csv('../../../data/reconstruction/attribution_MetaData_regions.csv')
 
-# indices for climate oscillations including lags
-teleData = pd.read_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/InputData/teleconnections_lag.csv')
 
-output_path = '/home/insauer/projects/NC_Submission/Climada_papers/Test/Lag_ENSO_GMT_PDO_NAO_Loo_Regions.csv'
+teleData = pd.read_csv('../../../data/climate_oscillations/norm_oscillations_lag.csv')
 
 normClim = True
 
@@ -34,24 +32,23 @@ link_fnc_list = [sm.families.links.log(), sm.families.links.identity(),
                  sm.families.links.inverse_power()]
 
 teleData80 = teleData.loc[teleData['Year'] >= 1980]
-telecon80 = teleData80[['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']]
+telecon80 = teleData80[['ENSO', 'ENSOlag', 'GMT', 'PDO', 'PDOlag', 'NAO', 'NAOlag']]
 
 teleData = teleData.loc[teleData['Year'] >= 1971]
-telecon = teleData[['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']]
+telecon = teleData[['ENSO', 'ENSOlag', 'GMT', 'PDO', 'PDOlag', 'NAO', 'NAOlag']]
 
-region_names = {'GLB': 'Global',
-                'NAM': 'North America',
-                'LAM': 'Central America',
-                'EUR': 'Western Europe',
-                'NAFARA': 'North Africa + Middle East',
-                'SSAF': 'SSA + Southern Africa',
-                'CAS': 'Central Asia + Eastern Europe',
-                'SWEA': 'Southern Asia + South-East Asia',
-                'CHN': 'Eastern Asia',
-                'AUS': 'Oceania'
-                }
+region_names = {'GLB': 'Global (GLB)',
+              'NAM':'North America (NAM)',
+              'EAS':'Eastern Asia (EAS)',
+              'OCE':'Oceania (OCE)',
+              'LAM':'Latin America (LAM)',
+              'EUR':'Europe (EUR)',
+              'CAS':'Central Asia (CAS)',
+              'SSA':'South & Sub-Sahara Africa (SSA)',
+              'SEA':'South & South-East Asia (SEA)', 
+              'NAF':'North Africa & Middle East (NAF)'}
 
-predictors = ['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']
+predictors = ['ENSO', 'ENSOlag', 'GMT', 'PDO', 'PDOlag', 'NAO', 'NAOlag']
 
 test_regions = list(region_names)
 
@@ -163,7 +160,7 @@ def find_best_model(climateDat, telecon):
     """
     max_i = 5000
 
-    if test_region == 'AUS':
+    if test_region == 'OCE':
 
         climateDat = np.nan_to_num(climateDat)
 
@@ -231,7 +228,7 @@ def find_best_model(climateDat, telecon):
         iter_max, pearson_corr, best_loo, looICs_lf, comb_list_lf
 
 
-def test_residuals(model, timeperiod, reg):
+def test_residuals(model, timeperiod,reg):
     """
     Test for a residual trend, applying a Mann-Kendall-test
 
@@ -253,41 +250,30 @@ def test_residuals(model, timeperiod, reg):
     res_trend = mk.original_test(model.resid_response, alpha=0.1)
     
     fig, ax = plt.subplots(figsize=(12, 8))
-    sm.graphics.tsa.plot_acf(model.resid_response, lags=39, ax = ax)
-    ax.set_xlabel('lag')
-    ax.set_title('Autocorrelation {}'.format(reg))
-    #fig.savefig('/home/insauer/projects/NC_Submission/Climada_papers/Test/AutocorrResidualsGMT_{}.png'.format(reg),bbox_inches = 'tight',dpi =600)
-    
+
     alt_trend_test = mk.hamed_rao_modification_test(model.resid_response)
 
     return res_trend.slope, res_trend.p, alt_trend_test.trend, alt_trend_test.p
 
 def test_autocorrelation(time_series):
     """
-    Test for a residual trend, applying a Mann-Kendall-test
+    Test for autocorrelation
 
     Parameters
     ----------
-    model : GLMObject
-        Best model
-    timeperiod : np.array
-        considered years (not used here)
+    time-series
 
     Returns
     -------
     float
-        slope in residuals
-    float
-        p-value
+        tau
 
     """
     auto = mk.original_test(time_series, alpha=0.1)
 
     return auto.Tau
 
-
-def extract_model_coefs(region, model, link, model10, link10, model80,
-                        link80, model8010, link8010):
+def extract_model_coefs_short(region, model, link):
     """
     Reads the coefficients and p-values for each predictor of the best model
     and saves data in a csv file. To achieve comparability between coefficients of
@@ -302,24 +288,12 @@ def extract_model_coefs(region, model, link, model10, link10, model80,
         best model (1971-2010, 1980 fixed exposure)
     link : int
         index of link function (1971-2010, 1980 fixed exposure)
-    model10 : GLMObject
-        best model (1971-2010, 2010 fixed exposure)
-    link10 : int
-        index of link function (1971-2010, 2010 fixed exposure)
-    model80 : GLMObject
-        best model (1980-2010, 1980 fixed exposure)
-    link80 : int
-        index of link function (1980-2010, 1980 fixed exposure)
-    model8010 : GLMObject
-        best model (1980-2010, 2010 fixed exposure)
-    link8010 : int
-        index of link function (1980-2010, 1980 fixed exposure)
 
     """
-    shortage = ['', '10', '80', '8010']
-    mods = [model,  model10, model80, model8010]
-    coefs = ['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']
-    lnks = [link,  link10, link80, link8010]
+    shortage = ['']
+    mods = [model]
+    coefs = ['ENSO', 'ENSOlag', 'GMT', 'PDO', 'PDOlag', 'NAO', 'NAOlag']
+    lnks = [link]
     dev_index = [20, 20, 15, 15]
 
     for m, mod in enumerate(mods):
@@ -329,25 +303,23 @@ def extract_model_coefs(region, model, link, model10, link10, model80,
         for c, coef in enumerate(coefs):
             try:
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                              coef+'_'+shortage[m]] = mod.params[coef]
+                              'alpha_{}_gmt_run'.format(coef)] = mod.params[coef]
                 coef_deriv = link_fnc_list[lnks[m]].inverse_deriv(teleData[coef])\
                     * mod.params[coef]
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                              coef+'dv_'+shortage[m]] = np.array(coef_deriv)[dev_index[m]]
+                              'gammaAbs_{}_gmt_run'.format(coef)] = np.array(coef_deriv)[dev_index[m]]
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                              coef+'pval_'+shortage[m]] = mod.pvalues[coef]
+                              'pval_ENSO_gmt_run'.format(coef)] = mod.pvalues[coef]
                 coeff_sum += mod.params[coef]
             except KeyError:
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                              coef+'_'+shortage[m]] = np.nan
+                              'alpha_{}_gmt_run'.format(coef)] = np.nan
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                              coef+'dv_'+shortage[m]] = np.nan
+                              'gammaAbs_{}_gmt_run'.format(coef)] = np.nan
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                              coef+'pval_'+shortage[m]] = np.nan
-        DATA_ATTR.loc[DATA_ATTR['Region'] == region,
-                      'CoefSum_'+shortage[m]] = coeff_sum
+                              'pval_ENSO_gmt_run'.format(coef)] = np.nan
 
-    DATA_ATTR.to_csv(output_path)
+    DATA_ATTR.to_csv('../../../data/reconstruction/ENSO_GMT_PDO_NAO_regions.csv')
 
 
 def unexplainable_Trends(pval, slope, test_region, change, sign):
@@ -393,14 +365,17 @@ for i, test_region in enumerate(test_regions):
     DATA_region = DATA_TS[(DATA_TS['Region'] == test_region) &
                           (DATA_TS['Year'] < 2011) & (DATA_TS['Year'] > 1970)]
 
-    climateData = np.array(DATA_region['Norm_ImpFix_2y_offset'])
+    DATA_region80 = DATA_TS[(DATA_TS['Region'] == test_region) &
+                            (DATA_TS['Year'] < 2011) & (DATA_TS['Year'] > 1979)]
+
+
+    climateData = np.array(DATA_region['D_1980'])
     auto_corr = test_autocorrelation(climateData)
-
-
 
     if normClim is True:
 
         climateData = climateData/np.nanmax(climateData)
+
 
     t, shap_log = shapiro(np.log(climateData))
 
@@ -408,7 +383,7 @@ for i, test_region in enumerate(test_regions):
 
     best_model, y, x, maxi, pearson_corr, best_loo, loos, combs = find_best_model(climateData, telecon)
 
-    
+
     comb_df = pd.DataFrame(combs)
     comb_df = comb_df.T
     
@@ -417,41 +392,30 @@ for i, test_region in enumerate(test_regions):
     loo_df = loo_df.T
     loo_df.columns = ['log', 'identity', 'inverse-power']
     loo_df['combination'] = comb_df.iloc[:, 0]
-    # store LooCV out-of-sample-errors
-    loo_df.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/LooIC_ENSO_GMT_PDO_NAO_Regions_{}.csv'.format(test_region))
+    loo_df.to_csv('../../../data/reconstruction/LooIC_ENSO_GMT_PDO_NAO_{}.csv'.format(test_region))
 
-    extract_model_coefs(test_region,  best_model, y)
+    extract_model_coefs_short(test_region,  best_model, y)
 
     coef, pval, alt_trend, alt_pval = test_residuals(best_model, np.arange(1971, 2011), test_region)
 
-    unexT = unexplainable_Trends(pval, coef, test_region, 'Change H7', 'Sign H7')
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Res_Sig'] = pval
+    unexT = unexplainable_Trends(pval, coef, test_region, 'C_1980_71', 'p_val_C_1980_71')
 
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Res_Slope'] = coef
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'pval_residual_trend_gmt_run'] = pval
 
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Unexplained Haz'] = unexT
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'residual_trend_gmt_run'] = coef
 
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'CorrCoef'] = pearson_corr
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Unexplained Trend'] = unexT
 
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'BestLoo'] = best_loo
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'R2_D_1980_bm_gmt_run'] = pearson_corr
 
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Best_link'] =\
-        best_model.fit_history['iteration']
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'oose_gmt_run'] = best_loo
 
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Link_func'] = y
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Autocorr'] = auto_corr
+    DATA_ATTR.to_csv('../../../data/reconstruction/ENSO_GMT_PDO_NAO_regions.csv')
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Combi'] = x
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, 'Maxi'] = maxi
-
-    DATA_ATTR.to_csv(output_path)
-
-DATA_ATTR.to_csv(output_path)
+DATA_ATTR.to_csv('../../../data/reconstruction/ENSO_GMT_PDO_NAO_regions.csv')

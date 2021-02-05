@@ -65,58 +65,58 @@ def rel_time_attr_MK(dataFrame71, disch):
 
     dataFrame = dataFrame71[dataFrame71['Year'] > 1979]
 
-    regLHazExp = mk.original_test(dataFrame['NormExp_Impact_2y{}_trend'.format(disch)],
+    regLHazExp = mk.original_test(dataFrame['D_CliExp_norm_for_trend_{}'.format(disch)],
                                   alpha=0.1)
-    slopeLHazExp = stats.theilslopes(dataFrame['NormExp_Impact_2y{}_trend'.format(disch)],
+    slopeLHazExp = stats.theilslopes(dataFrame['D_CliExp_norm_for_trend_{}'.format(disch)],
                                      alpha=0.1)
 
     regHE = [regLHazExp.slope, regLHazExp.p, slopeLHazExp[2], slopeLHazExp[3]]
 
-    regLFull = mk.original_test(dataFrame['Norm_Impact_Pred_{}'.format(disch)],
+    regLFull = mk.original_test(dataFrame['D_Full_{}'.format(disch)],
                                 alpha=0.1)
 
-    slopeLFull = stats.theilslopes(dataFrame['Norm_Impact_Pred_{}'.format(disch)],
+    slopeLFull = stats.theilslopes(dataFrame['D_Full_{}'.format(disch)],
                                    alpha=0.1)
 
     regF = [regLFull.slope, regLFull.p, slopeLFull[2], slopeLFull[3]]
 
-    regHaz = mk.original_test(dataFrame['NormHaz_ImpFix_2y{}_trend'.format(disch)],
+    regHaz = mk.original_test(dataFrame['D_1980_norm_for_trend_{}'.format(disch)],
                               alpha=0.1)
 
-    slopeHaz = stats.theilslopes(dataFrame['NormHaz_ImpFix_2y{}_trend'.format(disch)],
+    slopeHaz = stats.theilslopes(dataFrame['D_1980_norm_for_trend_{}'.format(disch)],
                                  alpha=0.1)
 
     regH = [regHaz.slope, regHaz.p, slopeHaz[2], slopeHaz[3]]
 
-    regHaz7 = mk.original_test(dataFrame71['NormHaz_ImpFix_2y{}_trend'.format(disch)], alpha=0.1)
+    regHaz7 = mk.original_test(dataFrame71['D_1980_norm_for_trend_{}'.format(disch)], alpha=0.1)
 
-    slopeHaz7 = stats.theilslopes(dataFrame71['NormHaz_ImpFix_2y{}_trend'.format(disch)],
+    slopeHaz7 = stats.theilslopes(dataFrame71['D_1980_norm_for_trend_{}'.format(disch)],
                                   alpha=0.1)
 
     regH7 = [regHaz7.slope, regHaz7.p, slopeHaz7[2], slopeHaz7[3]]
 
-    regHaz107 = mk.original_test(dataFrame71['NormHaz_Imp2010_2y{}_trend'.format(disch)],
+    regHaz107 = mk.original_test(dataFrame71['D_2010_norm_for_trend_{}'.format(disch)],
                                  alpha=0.1)
 
-    slopeHaz107 = stats.theilslopes(dataFrame71['NormHaz_Imp2010_2y{}_trend'.format(disch)],
+    slopeHaz107 = stats.theilslopes(dataFrame71['D_2010_norm_for_trend_{}'.format(disch)],
                                     alpha=0.1)
 
     regH107 = [regHaz107.slope, regHaz107.p, slopeHaz107[2], slopeHaz107[3]]
 
-    regHaz10 = mk.original_test(dataFrame['NormHaz_Imp2010_2y{}_trend'.format(disch)],
+    regHaz10 = mk.original_test(dataFrame['D_2010_norm_for_trend_{}'.format(disch)],
                                 alpha=0.1)
 
-    slopeHaz10 = stats.theilslopes(dataFrame['NormHaz_Imp2010_2y{}_trend'.format(disch)],
+    slopeHaz10 = stats.theilslopes(dataFrame['D_2010_norm_for_trend_{}'.format(disch)],
                                    alpha=0.1)
 
     regH10 = [regHaz10.slope, regHaz10.p, slopeHaz10[2], slopeHaz10[3]]
 
-    regE = mk.original_test(dataFrame['NormExp_Impact_2y{}_trend'.format(disch)], alpha=0.1)
-    regE7 = mk.original_test(dataFrame['NormExp_Impact_2y{}_trend'.format(disch)], alpha=0.1)
+    regE = mk.original_test(dataFrame['D_CliExp_norm_for_trend_{}'.format(disch)], alpha=0.1)
+    regE7 = mk.original_test(dataFrame['D_CliExp_norm_for_trend_{}'.format(disch)], alpha=0.1)
 
-    regV = mk.original_test(dataFrame['Norm_Impact_Pred_{}'.format(disch)], alpha=0.1)
+    regV = mk.original_test(dataFrame['D_Full_{}'.format(disch)], alpha=0.1)
 
-    regI = mk.original_test(dataFrame['Norm_Impact_Pred_{}'.format(disch)],
+    regI = mk.original_test(dataFrame['D_Full_{}'.format(disch)],
                             alpha=0.1)
     regI = regF
 
@@ -149,107 +149,73 @@ def normalise(region, dataFrame):
 
     """
 
-    obs_adj_neg = dataFrame.loc[dataFrame['Year'] > 1979, 'natcat_damages_2005_CPI_Neg'].mean() / \
-        dataFrame.loc[dataFrame['Year'] > 1979, 'Impact_Pred_Neg'].mean()
-    obs_adj_pos = dataFrame.loc[dataFrame['Year'] > 1979, 'natcat_damages_2005_CPI_Pos'].mean() / \
-        dataFrame.loc[dataFrame['Year'] > 1979, 'Impact_Pred_Pos'].mean()
+    obs_adj_neg = dataFrame.loc[dataFrame['Year'] > 1979, 'natcat_damages_2005_CPI_neg'].mean() / \
+        dataFrame.loc[dataFrame['Year'] > 1979, 'D_Full_neg_raw'].mean()
+    obs_adj_pos = dataFrame.loc[dataFrame['Year'] > 1979, 'natcat_damages_2005_CPI_pos'].mean() / \
+        dataFrame.loc[dataFrame['Year'] > 1979, 'D_Full_pos_raw'].mean()
 
-    dataFrame['Norm_Impact_Pred_Neg'] = dataFrame['Impact_Pred_Neg'] * obs_adj_neg
-    dataFrame['Norm_Impact_Pred_Pos'] = dataFrame['Impact_Pred_Pos'] * obs_adj_pos
+    dataFrame['D_Full_neg'] = dataFrame['D_Full_neg_raw'] * obs_adj_neg
+    dataFrame['D_Full_pos'] = dataFrame['D_Full_pos_raw'] * obs_adj_pos
 
     # normalisation for plotting
-    offsetExpNeg = dataFrame.loc[dataFrame['Year'] == 1980, 'Norm_Impact_Pred_Neg'].sum() / \
-        dataFrame.loc[dataFrame['Year'] == 1980, 'Impact_2yNeg'].sum()
-    dataFrame['NormExp_Impact_2yNeg_offset'] = dataFrame['Impact_2yNeg'] * offsetExpNeg
+    offsetExpNeg = dataFrame.loc[dataFrame['Year'] == 1980, 'D_Full_neg'].sum() / \
+        dataFrame.loc[dataFrame['Year'] == 1980, 'D_CliExp_neg_raw'].sum()
+    dataFrame['D_CliExp_neg'] = dataFrame['D_CliExp_neg_raw'] * offsetExpNeg
 
-    offsetExpPos = dataFrame.loc[dataFrame['Year'] == 1980, 'Norm_Impact_Pred_Pos'].sum() / \
-        dataFrame.loc[dataFrame['Year'] == 1980, 'Impact_2yPos'].sum()
-    dataFrame['NormExp_Impact_2yPos_offset'] = dataFrame['Impact_2yPos'] * offsetExpPos
+    offsetExpPos = dataFrame.loc[dataFrame['Year'] == 1980, 'D_Full_pos'].sum() / \
+        dataFrame.loc[dataFrame['Year'] == 1980, 'D_CliExp_pos_raw'].sum()
+    dataFrame['D_CliExp_pos'] = dataFrame['D_CliExp_pos_raw'] * offsetExpPos
 
     offsetHazNeg = dataFrame.loc[dataFrame['Year'] == 1980,
-                                 'Norm_Impact_Pred_Neg'].sum() / \
-        dataFrame.loc[dataFrame['Year'] == 1980, 'ImpFix_2yNeg'].sum()
-    dataFrame['NormHaz_ImpFix_2yNeg_offset'] = dataFrame['ImpFix_2yNeg'] * offsetHazNeg
+                                 'D_Full_neg'].sum() / \
+        dataFrame.loc[dataFrame['Year'] == 1980, 'D_1980_neg_raw'].sum()
+    dataFrame['D_1980_neg'] = dataFrame['D_1980_neg_raw'] * offsetHazNeg
 
-    offsetHazPos = dataFrame.loc[dataFrame['Year'] == 1980, 'Norm_Impact_Pred_Pos'].sum() / \
-        dataFrame.loc[dataFrame['Year'] == 1980, 'ImpFix_2yPos'].sum()
-    dataFrame['NormHaz_ImpFix_2yPos_offset'] = dataFrame['ImpFix_2yPos'] * offsetHazPos
+    offsetHazPos = dataFrame.loc[dataFrame['Year'] == 1980, 'D_Full_pos'].sum() / \
+        dataFrame.loc[dataFrame['Year'] == 1980, 'D_1980_pos_raw'].sum()
+    dataFrame['D_1980_pos'] = dataFrame['D_1980_pos_raw'] * offsetHazPos
 
-    dataFrame['NormHaz_Imp2010_2yPos_offset'] = dataFrame['Imp2010_2yPos']*offsetExpPos
-    dataFrame['NormHaz_Imp2010_2yNeg_offset'] = dataFrame['Imp2010_2yNeg']*offsetExpNeg
+    dataFrame['D_2010_pos'] = dataFrame['D_2010_pos_raw']*offsetExpPos
+    dataFrame['D_2010_neg'] = dataFrame['D_2010_neg_raw']*offsetExpNeg
 
     # modelspread for plotting
 
-    dataFrame['Norm_Impact_Pred_1thrd_Neg'] = dataFrame['Impact_Pred_1thrd_Neg'] * obs_adj_neg
+    dataFrame['D_Full_1thrd_neg'] = dataFrame['D_Full_1thrd_neg_raw'] * obs_adj_neg
 
-    dataFrame['Norm_Impact_Pred_1thrd_Pos'] = dataFrame['Impact_Pred_1thrd_Pos'] * obs_adj_pos
+    dataFrame['D_Full_1thrd_pos'] = dataFrame['D_Full_1thrd_pos_raw'] * obs_adj_pos
 
-    dataFrame['Norm_Impact_Pred_2thrd_Neg'] = dataFrame['Impact_Pred_2thrd_Neg'] * obs_adj_neg
+    dataFrame['D_Full_2thrd_neg'] = dataFrame['D_Full_2thrd_neg_raw'] * obs_adj_neg
 
-    dataFrame['Norm_Impact_Pred_2thrd_Pos'] = dataFrame['Impact_Pred_2thrd_Pos'] * obs_adj_pos
+    dataFrame['D_Full_2thrd_pos'] = dataFrame['D_Full_2thrd_pos_raw'] * obs_adj_pos
 
-    dataFrame['Norm_Impact_2yNeg_onethird_quantile'] = \
-        dataFrame['Impact_2yNeg_onethird_quantile'] * offsetExpNeg
 
-    dataFrame['Norm_Impact_2yPos_onethird_quantile'] = \
-        dataFrame['Impact_2yPos_onethird_quantile'] * offsetExpPos
-
-    dataFrame['Norm_Impact_2yNeg_twothird_quantile'] = \
-        dataFrame['Impact_2yNeg_twothird_quantile'] * offsetExpNeg
-
-    dataFrame['Norm_Impact_2yPos_twothird_quantile'] = \
-        dataFrame['Impact_2yPos_twothird_quantile'] * offsetExpPos
-
-    dataFrame['Norm_ImpFix_2yNeg_onethird_quantile'] = \
-        dataFrame['ImpFix_2yNeg_onethird_quantile'] * offsetExpNeg
-
-    dataFrame['Norm_ImpFix_2yPos_onethird_quantile'] = \
-        dataFrame['ImpFix_2yPos_onethird_quantile'] * offsetExpPos
-
-    dataFrame['Norm_ImpFix_2yNeg_twothird_quantile'] = \
-        dataFrame['ImpFix_2yNeg_twothird_quantile'] * offsetExpNeg
-
-    dataFrame['Norm_ImpFix_2yPos_twothird_quantile'] = \
-        dataFrame['ImpFix_2yPos_twothird_quantile'] * offsetExpPos
-
-    dataFrame['Norm_Imp2010_2yNeg_onethird_quantile'] = \
-        dataFrame['Imp2010_2yNeg_onethird_quantile'] * offsetExpNeg
-
-    dataFrame['Norm_Imp2010_2yPos_onethird_quantile'] = \
-        dataFrame['Imp2010_2yPos_onethird_quantile'] * offsetExpPos
-
-    dataFrame['Norm_Imp2010_2yNeg_twothird_quantile'] = \
-        dataFrame['Imp2010_2yNeg_twothird_quantile'] * offsetExpNeg
-
-    dataFrame['Norm_Imp2010_2yPos_twothird_quantile'] = \
-        dataFrame['Imp2010_2yPos_twothird_quantile'] * offsetExpPos
 
     # normalisation for trend estimation
 
-    trendNormExpNeg = dataFrame.loc[dataFrame['Year'] >= 1980, 'Norm_Impact_Pred_Neg'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'Impact_2yNeg'].mean()
-    dataFrame['NormExp_Impact_2yNeg_trend'] = dataFrame['Impact_2yNeg'] * trendNormExpNeg
+    trendNormExpNeg = dataFrame.loc[dataFrame['Year'] >= 1980, 'D_Full_neg'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_CliExp_neg_raw'].mean()
+    dataFrame['D_CliExp_norm_for_trend_neg'] = dataFrame['D_CliExp_neg_raw'] * trendNormExpNeg
 
-    trendNormExpPos = dataFrame.loc[dataFrame['Year'] >= 1980, 'Norm_Impact_Pred_Pos'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'Impact_2yPos'].mean()
-    dataFrame['NormExp_Impact_2yPos_trend'] = dataFrame['Impact_2yPos'] * trendNormExpPos
+    trendNormExpPos = dataFrame.loc[dataFrame['Year'] >= 1980, 'D_Full_pos'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_CliExp_pos_raw'].mean()
+    dataFrame['D_CliExp_norm_for_trend_pos'] = dataFrame['D_CliExp_pos_raw'] * trendNormExpPos
 
-    trendNormHazNeg = dataFrame.loc[dataFrame['Year'] >= 1980, 'Norm_Impact_Pred_Neg'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'ImpFix_2yNeg'].mean()
-    dataFrame['NormHaz_ImpFix_2yNeg_trend'] = dataFrame['ImpFix_2yNeg'] * trendNormHazNeg
+    trendNormHazNeg = dataFrame.loc[dataFrame['Year'] >= 1980, 'D_Full_neg'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_1980_neg_raw'].mean()
+    dataFrame['D_1980_norm_for_trend_neg'] = dataFrame['D_1980_neg_raw'] * trendNormHazNeg
 
-    trendNormHazPos = dataFrame.loc[dataFrame['Year'] >= 1980, 'Norm_Impact_Pred_Pos'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'ImpFix_2yPos'].mean()
+    trendNormHazPos = dataFrame.loc[dataFrame['Year'] >= 1980, 'D_Full_pos'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_1980_pos_raw'].mean()
 
-    dataFrame['NormHaz_ImpFix_2yPos_trend'] = dataFrame['ImpFix_2yPos'] * trendNormHazPos
+    dataFrame['D_1980_norm_for_trend_pos'] = dataFrame['D_1980_pos_raw'] * trendNormHazPos
 
-    trendNormHaz10Neg = dataFrame.loc[dataFrame['Year'] >= 1980, 'Norm_Impact_Pred_Neg'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'Imp2010_2yNeg'].mean()
-    dataFrame['NormHaz_Imp2010_2yNeg_trend'] = dataFrame['Imp2010_2yNeg'] * trendNormHaz10Neg
+    trendNormHaz10Neg = dataFrame.loc[dataFrame['Year'] >= 1980, 'D_Full_neg'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_2010_neg_raw'].mean()
+    dataFrame['D_2010_norm_for_trend_neg'] = dataFrame['D_2010_neg_raw'] * trendNormHaz10Neg
 
-    trendNormHaz10Pos = dataFrame.loc[dataFrame['Year'] >= 1980, 'Norm_Impact_Pred_Pos'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'Imp2010_2yPos'].mean()
-    dataFrame['NormHaz_Imp2010_2yPos_trend'] = dataFrame['Imp2010_2yPos'] * trendNormHaz10Pos
+    trendNormHaz10Pos = dataFrame.loc[dataFrame['Year'] >= 1980, 'D_Full_pos'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_2010_pos_raw'].mean()
+    dataFrame['D_2010_norm_for_trend_pos'] = dataFrame['D_2010_pos_raw'] * trendNormHaz10Pos
 
     return dataFrame
 
@@ -308,7 +274,7 @@ def prep_table_timeMK(region, data, regLHaz, regLHazExp, regLFull, regH7,
     """
 
     dam_norm = np.nanmean(data.loc[(data['Year'] > 1979) & (data['Year'] < 1991),
-                        'Impact_Pred_{}'.format(dis)])
+                        'D_Full_{}'.format(dis)])
     nat_norm = np.nanmean(data.loc[(data['Year'] > 1979) & (data['Year'] < 1996),
                         'natcat_damages_2005_CPI_{}'.format(dis)])
 
@@ -343,6 +309,7 @@ def prep_table_timeMK(region, data, regLHaz, regLHazExp, regLFull, regH7,
     # cH_norm = (regH10.params[0]*100)/dam_norm
     cH7_norm = regH7[0]  # *100/nat_norm
     cE_norm = (regLHazExp[0]-regLHaz[0])*100/nat_norm
+    cE10_norm = (regLHazExp[0]-regH10[0]) * 100 / nat_norm
     cV_norm = (regLFull[0]-regLHazExp[0])*100/nat_norm
 
     cI_norm = regLFull[0]*100/nat_norm
@@ -350,46 +317,31 @@ def prep_table_timeMK(region, data, regLHaz, regLHazExp, regLFull, regH7,
 
 
     table1 = pd.DataFrame({'Region': region+'_'+dis,
-                           'Change H': regLHaz[0],  # develop_taylor(regH, 1995)[0],
-                           'Change Hn': cH_norm,
-                           'Change HnCLup': cH_up,
-                           'Change HnCLbot': cH_bot,
-                           'Change HnCL': cH_normCL,
-                           'Change H10': regH10[0],  # develop_taylor(regH10, 1995)[0],
-                           'Change H10nCL': cH10_normCL,
-                           'Change H10nCLup': cH10up_normCL,
-                           'Change H10nCLbot': cH10bot_normCL,
-                           'Change H7': regH7[0],  # develop_taylor(regH7, 1991)[0]
-                           'Change H7n': cH7_norm,
-                           'Change H7nCLup': cH7up_normCL,
-                           'Change H7nCLbot': cH7bot_normCL,
-                           'Change H7nCL': cH7_normCL,
-                           'Change H107': regH107[0],  # develop_taylor(regH107, 1991)[0],
-                           'Change H107nCLup': cH107up_normCL,
-                           'Change H107nCLbot': cH107bot_normCL,
-                           'Change H107nCL': cH107_normCL,
-                           'Change E7': regE7.slope,  # develop_taylor(regE7, 1991)[0],
-                           'Change E': regE.slope,  # develop_taylor(regE, 1995)[0],
-                           'Change En': cE_norm,
-                           'Change V': regV.slope,  # develop_taylor(regV, 1995)[0],
-                           'Change Vn': cV_norm,
-                           'Change I': regI[0],  # develop_taylor(regI, 1995)[0],
-                           'Change In': cI_norm,
-                           'Change N': regN[0],  # develop_taylor(regN, 1995)[0],
-                           'Change Nn': cN_norm,
-                           'Sign H': regLHaz[1],
-                           'Sign H10': regH10[1],
-                           'Sign H7': regH7[1],
-                           'Sign H107': regH107[1],
-                           'Sign E': regE.p,
-                           'Sign E7': regE7.p,
-                           'Sign V': regV.p,
-                           'Sign I': regI[1],
-                           'Sign N': regN[1],
-                           '2010_haz_loss80': regH10[0]*31,
-                           '2010_haz_loss71': regH107[0]*40,
-                           '2010_haz_loss80_rel': regH10[0]*31/nat_norm,
-                           '2010_haz_loss71_rel': regH107[0]*40/nat_norm,
+                           'C_1980_80up': cH_up,
+                           'C_1980_80bot': cH_bot,
+                           'C_1980_80': cH_normCL,
+                           'C_2010_80': cH10_normCL,
+                           'C_2010_80up': cH10up_normCL,
+                           'C_2010_80bot': cH10bot_normCL,
+                           'C_1980_71': cH7_normCL,
+                           'C_1980_71up': cH7up_normCL,
+                           'C_1980_71bot': cH7bot_normCL,
+                           'C_2010_71up': cH107up_normCL,
+                           'C_2010_71bot': cH107bot_normCL,
+                           'C_2010_71': cH107_normCL,
+                           'E_exposure': cE_norm,
+                           'E_exposure_2010': cE10_norm,
+                           'V_vulnerability': cV_norm,
+                           'M_damage_modeled': cI_norm,
+                           'N_damage_observed': cN_norm,
+                           'p_val_C_1980_80': regLHaz[1],
+                           'p_val_C_2010_80': regH10[1],
+                           'p_val_C_1980_71': regH7[1],
+                           'p_val_C_2010_71': regH107[1],
+                           'p_val_M_damage_modeled': regI[1],
+                           'p_val_N_damage_observed': regN[1],
+                           'delta_2010_since80': (regH10[0]*31/nat_norm)*100,
+                           'delta_2010_since71': (regH107[0]*40/nat_norm)*100,
 
                            },
                           index=[0])
@@ -411,18 +363,18 @@ def attr_regr(dataFrame):
 
         regLHazPos, regLHazExpPos, regLFullPos, regH7Pos, regH107Pos,\
             regH10Pos, regEPos, regE7Pos, regVPos, regIPos, regNPos =\
-            rel_time_attr_MK(DATA_region, 'Pos')
+            rel_time_attr_MK(DATA_region, 'pos')
         regLHazNeg, regLHazExpNeg, regLFullNeg, regH7Neg, regH107Neg,\
             regH10Neg, regENeg, regE7Neg, regVNeg, regINeg, regNNeg =\
-            rel_time_attr_MK(DATA_region, 'Neg')
+            rel_time_attr_MK(DATA_region, 'neg')
         attrRegPos = prep_table_timeMK(test_region, DATA_region, regLHazPos,
                                        regLHazExpPos, regLFullPos, regH7Pos,
                                        regH107Pos, regH10Pos, regEPos, regE7Pos,
-                                       regVPos, regIPos, regNPos, 'Pos')
+                                       regVPos, regIPos, regNPos, 'pos')
         attrRegNeg = prep_table_timeMK(test_region, DATA_region, regLHazNeg,
                                        regLHazExpNeg, regLFullNeg, regH7Neg,
                                        regH107Neg, regH10Neg, regENeg, regE7Neg,
-                                       regVNeg, regINeg, regNNeg, 'Neg')
+                                       regVNeg, regINeg, regNNeg, 'neg')
 
         attrTable = attrTable.append(attrRegPos, ignore_index=True)
 
@@ -432,33 +384,26 @@ def attr_regr(dataFrame):
     return normData, attrTable
 
 
-DATA = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/VulnerabilityAdjustmentTimeSeriesSubregions.csv')
+DATA = pd.read_csv('../../../data/reconstruction/vulnerability_adjustment_TimeSeries_subregions.csv')
 
 
 region_names = {'NAM': 'North America',
-                'LAM': 'Latin America',
-                'EUR': 'Western Europe',
-                'NAFARA': 'North Africa + Middle East',
-                'SSAF': 'SSA+ Southern Africa',
+                'LAM': 'Central America',
+                'EUR': 'Europe',
+                'NAF': 'North Africa + Middle East',
+                'SSA': 'SSA + Southern Africa',
                 'CAS': 'Central Asia + Eastern Europe',
-                'SWEA': 'Southern Asia + South-East Asia',
-                'CHN': 'Eastern Asia',
-                'AUS': 'Oceania',
+                'SEA': 'Southern Asia + South-East Asia',
+                'EAS': 'Eastern Asia',
+                'OCE': 'Oceania',
                 'GLB': 'Global'}
 
 test_regions = list(region_names)
 
 
-normalisation = 'Predicted_damages'
-norm_names = {'Predicted_damages': 'RelPred',
-              'Observed_damages': 'RelObs',
-              'Absolute_damages': 'Abs'}
-
-regr = 'MK'
-
 
 normData, attrTable = attr_regr(DATA)
 
-attrTable.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AttributionMetaDataSubregions.csv', index=False)
+attrTable.to_csv('../../../data/reconstruction/attribution_MetaData_subregions.csv', index=False)
 
-normData.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AttributionTimeSeriesSubregions.csv', index=False)
+normData.to_csv('../../../data/reconstruction/attribution_TimeSeries_subregions.csv', index=False)

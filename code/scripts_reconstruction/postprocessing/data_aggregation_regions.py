@@ -3,34 +3,11 @@
 Spyder Editor
 
 This file aggregates multi-model flood damage output on country level 
-to regional model medians. Additionally recorde damage is added.
+to regional model medians. Additionally recorded damage is added.
 """
 import numpy as np
 import pandas as pd
 import os
-from astropy.convolution import convolve
-
-
-def runmean(data, halfwin):
-    """
-    Simple running mean.
-    CAUTION: Data is *extended* at the edges by repeating the
-    edge values; thereby any trend present in the data will
-    become attenuated at the edges!
-    """
-    window = 2*halfwin + 1
-    if window > len(data):
-        print('Error: window too large!')
-        import sys
-        sys.exit(0)
-    weights = np.repeat(1.0, window) / window
-    # Treat edges: Extend data
-    extended_data = np.hstack([[data[0]] * (halfwin), data, [data[len(data)-1]]
-                               * (halfwin)])
-    # rm = np.convolve(extended_data, weights, 'valid')
-    rm = convolve(extended_data, weights, boundary=None, nan_treatment='fill',
-                  preserve_nan=False)
-    return rm[halfwin:-halfwin]
 
 
 def aggregation_regions(x):
@@ -48,28 +25,18 @@ def aggregation_regions(x):
         regionally aggregated damages and other indicators
     """
     # Aggreagted damages is given as the sum over country-wise damages
-    aggregated_model_damages = x['Impact_2y_Flopros'].sum()
-    aggregated_model_damages0 = x['Impact_2y_0'].sum()
-    aggregated_model_damages_1980flospros = x['ImpFix_2y_Flopros'].sum()
-    aggregated_model_damages_1980_0 = x['ImpFix_2y_0'].sum()
-    aggregated_model_damages_2010flospros = x['Imp2010_2y_Flopros'].sum()
-    aggregated_model_damages_2010_0 = x['Imp2010_2y_0'].sum()
+    aggregated_model_damages = x['D_CliExp_raw'].sum()
+    aggregated_model_damages_1980flospros = x['D_1980_raw'].sum()
+    aggregated_model_damages_2010flospros = x['D_2010_raw'].sum()
     aggregated_observed_damages = (x['natcat_flood_damages_2005_CPI']).sum()
-    # Use the population-weighted GDP per cap
-    aggregated_flooded_area = x['FloodedAreaFlopros'].sum()
-    aggregated_flooded_area0 = x['FloodedArea0'].sum()
-    # aggregated_flooded_vol = x['FloodVol_Flopros'].sum()
-    return pd.Series([aggregated_model_damages, aggregated_model_damages0,
+
+    return pd.Series([aggregated_model_damages,
                       aggregated_model_damages_1980flospros,
-                      aggregated_model_damages_1980_0,
                       aggregated_model_damages_2010flospros,
-                      aggregated_model_damages_2010_0,
-                      aggregated_flooded_area,
-                      aggregated_flooded_area0, aggregated_observed_damages],
-                     index=['Impact_2y_Flopros', 'Impact_2y_0',
-                            'ImpFix_2y_Flopros', 'ImpFix_2y_0',
-                            'Imp2010_2y_Flopros', 'Imp2010_2y_0',
-                            'FloodedAreaFlopros', 'FloodedArea0',
+                      aggregated_observed_damages],
+                     index=['D_CliExp_raw',
+                            'D_1980_raw',
+                            'D_2010_raw',
                             'natcat_flood_damages_2005_CPI'])
 
 def func_median(x):
@@ -90,64 +57,31 @@ def func_median(x):
          model medians of regionally aggregated damages and other indicators
     """
     # identify the median of the model data:
-    median_model_damages = x['Impact_2y_Flopros'].median()  # =quantile(0.5)
-    median_model_damages0 = x['Impact_2y_0'].median()
-    median_model_damages_1980flospros = x['ImpFix_2y_Flopros'].median()
+    median_model_damages = x['D_CliExp_raw'].median()  # =quantile(0.5)
+    median_model_damages_1980flospros = x['D_1980_raw'].median()
     # =quantile(0.5)
-    median_model_damages_1980_0 = x['ImpFix_2y_0'].median()
-    median_model_damages_2010flospros = x['Imp2010_2y_Flopros'].median()
+    median_model_damages_2010flospros = x['D_2010_raw'].median()
     # =quantile(0.5)
-    median_model_damages_2010_0 = x['Imp2010_2y_0'].median()
+    
+    # the same for all
     median_observed_damages = (x['natcat_flood_damages_2005_CPI']).mean()
 
-    one_third_quantile_flood_area = x['FloodedAreaFlopros'].quantile(0.33)  # 30
-    two_third_quantile_flood_area = x['FloodedAreaFlopros'].quantile(0.66)  # 70
-    one_third_quantile_model_damages = x['Impact_2y_Flopros'].quantile(0.33)
+    one_third_quantile_model_damages = x['D_CliExp_raw'].quantile(0.3)
     # 30
-    one_third_quantile_model_damages_1980flospros = x['ImpFix_2y_Flopros'].quantile(0.33)  # 30
-    one_third_quantile_model_damages_2010flospros = x['Imp2010_2y_Flopros'].quantile(0.33)
-    two_third_quantile_model_damages = x['Impact_2y_Flopros'].quantile(0.66)  # 70
-    two_third_quantile_model_damages_1980flospros = x['ImpFix_2y_Flopros'].quantile(0.66)  # 70
-    two_third_quantile_model_damages_2010flospros = x['Imp2010_2y_Flopros'].quantile(0.33)  # 70
-    flood_area_flospros = x['FloodedAreaFlopros'].median()
-    flood_area_0 = x['FloodedArea0'].median()
-    # flood_vol = x['FloodVol_Flopros'].median()
+    two_third_quantile_model_damages = x['D_CliExp_raw'].quantile(0.7)  # 70
+
     return pd.Series([median_model_damages,
-                      median_model_damages0,
                       median_model_damages_1980flospros,
-                      median_model_damages_1980_0,
                       median_model_damages_2010flospros,
-                      median_model_damages_2010_0,
                       median_observed_damages,
-                      one_third_quantile_flood_area,
-                      two_third_quantile_flood_area,
                       one_third_quantile_model_damages,
-                      one_third_quantile_model_damages_1980flospros,
-                      one_third_quantile_model_damages_2010flospros,
-                      two_third_quantile_model_damages,
-                      two_third_quantile_model_damages_1980flospros,
-                      two_third_quantile_model_damages_2010flospros,
-                      flood_area_flospros,
-                      flood_area_0],
-                     index=['Impact_2y_Flopros',
-                            'Impact_2y_0',
-                            'ImpFix_2y_Flopros',
-                            'ImpFix_2y_0',
-                            'Imp2010_2y_Flopros',
-                            'Imp2010_2y_0',
+                      two_third_quantile_model_damages],
+                     index=['D_CliExp_raw',
+                            'D_1980_raw',
+                            'D_2010_raw',
                             'natcat_flood_damages_2005_CPI',
-                            'flood_area_onethird_quantile',
-                            'flood_area_twothird_quantile',
-                            'model_flood_damages_onethird_quantile', 
-                            'model_flood_damages_onethird_quantile_1980flopros',
-                            'model_flood_damages_onethird_quantile_2010flopros',
-                            'model_flood_damages_twothird_quantile',
-                            'model_flood_damages_twothird_quantile_1980flopros',
-                            'model_flood_damages_twothird_quantile_2010flopros',
-                            'FloodedAreaFlopros',
-                            'FloodedArea0'
-                            #  'FloodedArea0'
-                            ])
+                            'D_CliExp_raw_onethird_quantile', 
+                            'D_CliExp_raw_twothird_quantile'])
 
 
 def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
@@ -156,12 +90,6 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
     containing all the data. Damages are all converted to capital stock by
     applying a corresponding annual national conversion factor.
     Inserted are:
-        GDP (not relevant for final paper)
-        GDP 10 yr running mean (not relevant for final paper)
-        GDP per capita (not relevant for final paper)
-        Population (not relevant for final paper)
-        Capital Stock (not relevant for final paper)
-        GMT (not relevant for final paper)
         recorded damages (NatCat Munich Re)
 
     Parameters
@@ -182,17 +110,16 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
     # provide dataset with observational data these need to be requested from Munich Re
     # the DataSet needs to be treated with the adjustment for 2005 PPP as done in 
     # /code/scripts_reconstruction/natcat_damages/flood_damage_conversion.ipynb
-    natcat = pd.read_excel('/home/insauer/projects/Attribution/Floods/Paper_NC_Review_Data/'+
-                           'Input_PPP_conversion/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
-    countries = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/supporting_data/final_country_list.csv')
+    natcat = pd.read_excel('../../../data/downloads/1980-2016_Masterdatei_NatCat_worldwide_no-pw_2005conversions_PPP.xlsx', index_col=0)
+    countries = pd.read_csv('../../../data/supporting_data/final_country_list.csv')
     
     # asset rescaling to correct for the ssp transition and to convert GDP to capital stock
     # datasets can be generated with a separate code discribed in the readme.txt
-    if gdp_resc:
-        # here we need the files in /data/exposure_rescaling
-        resc_factors = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/resc_ssp_transition.csv')
-        # cap_factors = pd.read_csv('/home/insauer/projects/Attribution/Data/PostProcess_GDP2CapStock_cgdpoClean.csv')
-        cap_factors = pd.read_csv('/home/insauer/projects/NC_Submission/flood_attribution_paper/data/exposure_rescaling/totalwealth_capital_stock_rescaling.csv')
+    
+    # here we need the files in /data/exposure_rescaling
+    resc_factors = pd.read_csv('../../../data/exposure_rescaling/resc_ssp_transition.csv')
+
+    cap_factors = pd.read_csv('../../../data/exposure_rescaling/totalwealth_capital_stock_rescaling.csv')
 
     countries = list(set(megaDataFrame['Country']).intersection(countries.iloc[:, 0]))
     natcat_short = natcat.iloc[:,[4,7,8,9,13,12,11,21,20,25,29,33,-17,-3,-2,-1]] # selection of NatCat columns, containing all rows
@@ -217,26 +144,21 @@ def add_GDP_NatCat(megaDataFrame, years, gdp_resc):
             print(str(year) + ' ' + country)
             resc_fac_cnt_yr = resc_factors.loc[resc_factors['ISO'] == country, str(year)].sum()
             capst_fac_cnt_yr = cap_factors.loc[cap_factors['ISO'] == country, str(year)].sum()
-
-            megaDataFrame.loc[(megaDataFrame['Country'] == country) &
-                              (megaDataFrame['Year'] == year),
-                              'Impact_2y_Flopros'] *= resc_fac_cnt_yr * capst_fac_cnt_yr
-            megaDataFrame.loc[(megaDataFrame['Country'] == country) &
-                              (megaDataFrame['Year'] == year),
-                              'Impact_2y_0'] *= resc_fac_cnt_yr * capst_fac_cnt_yr
-            megaDataFrame.loc[(megaDataFrame['Country'] == country) &
-                              (megaDataFrame['Year'] == year),
-                              'ImpFix_2y_Flopros'] *= resc_fac_cnt_yr_1980 * capst_fac_cnt_yr_1980
-            megaDataFrame.loc[(megaDataFrame['Country'] == country) &
-                              (megaDataFrame['Year'] == year),
-                              'ImpFix_2y_0'] *= resc_fac_cnt_yr_1980 * capst_fac_cnt_yr_1980
-
-            megaDataFrame.loc[(megaDataFrame['Country'] == country) &
-                              (megaDataFrame['Year'] == year),
-                              'Imp2010_2y_Flopros'] *= resc_fac_cnt_yr_2010 * capst_fac_cnt_yr_2010
-            megaDataFrame.loc[(megaDataFrame['Country'] == country) &
-                              (megaDataFrame['Year'] == year),
-                              'Imp2010_2y_0'] *= resc_fac_cnt_yr_2010 * capst_fac_cnt_yr_2010
+            
+            # this lines need to be added if damage generation was done with CLIMADA, if damages 
+            # from region_damages_modelmedian_R.csv from the Supplementary Data is used
+            if gdp_resc:
+                megaDataFrame.loc[(megaDataFrame['Country'] == country) &
+                                  (megaDataFrame['Year'] == year),
+                                  'D_CliExp_raw'] *= resc_fac_cnt_yr * capst_fac_cnt_yr
+    
+                megaDataFrame.loc[(megaDataFrame['Country'] == country) &
+                                  (megaDataFrame['Year'] == year),
+                                  'D_1980_raw'] *= resc_fac_cnt_yr_1980 * capst_fac_cnt_yr_1980
+    
+                megaDataFrame.loc[(megaDataFrame['Country'] == country) &
+                                  (megaDataFrame['Year'] == year),
+                                  'D_2010_raw'] *= resc_fac_cnt_yr_2010 * capst_fac_cnt_yr_2010
 
             if year > 1979:
                 tmp_natcat_05_cpi = natcat_hydro.loc[(natcat_hydro['year']==year) & (natcat_hydro['ISO']==country), 'CPI_con'].sum()
@@ -416,54 +338,46 @@ def get_rm(col_names, dataFrame, rm_window):
         dataFrame[col] = runmean(dataFrame[col], rm_window)
 
     return dataFrame
-#  Cluster path where data from damage assessment calculated with CLIMADA
-#  for all model combinations is stored 
-path = '/home/insauer/mnt/ebm/inga/paper_results/paper_resubmission_1_12/'
+
+
 sort = ['Year', 'Country']
 years = np.arange(1971, 2012)
 
+""" If damages where previously calculated with CLIMADA please uncomment the following instructions.
+"""
+
+#  Path where data from damage assessment calculated with CLIMADA is stored (output) from all models
+
+#path = '../../../data/damage_reco/'
+
+#  Building one big data set with all the data from all model runs
+
+#assDataFrame = assemble_data_frame(path, sort, years)
+
+#  New regional aggregation (change region name)
+
+#assDataFrame = aggregate_new_region(assDataFrame)
+
+""" If country level damages are used from country_damages_multimodel_R.csv from the
+    Supplementary Data, start the script here and add the correct path.
+"""
+assDataFrame = pd.read_csv('../../../data/supplementary_data/country_damages_multimodel_R.csv')
+
 # Columns used for region aggregation
-in_cols = ['Impact_2y_Flopros',  # D_CliExp_raw
-           'Impact_2y_0',
-           'ImpFix_2y_Flopros',  # D_1980_raw
-           'ImpFix_2y_0',
-           'Imp2010_2y_Flopros',  # D_2010_raw
-           'Imp2010_2y_0',
-           'FloodedAreaFlopros',
-           'FloodedArea0',
+in_cols = ['D_CliExp_raw',  # D_CliExp_raw
+           'D_1980_raw',  # D_1980_raw
+           'D_2010_raw',  # D_2010_raw
            'natcat_flood_damages_2005_CPI']
 
-# groupby year and model...
+""" If damages where previously calculated with CLIMADA set gdp_resc = False, if supplementary data
+    is used set gdp_resc = True.
+"""
+assDataFrame = add_GDP_NatCat(assDataFrame, years, gdp_resc = False)
 
-
-
-
-#Building one big data set with all the data from all model runs
-
-assDataFrame = assemble_data_frame(path, sort, years)
-# assDataFrame.rename(columns={"Impact_2yFlopros": "Impact_2y_Flopros",
-#                               "Impact_2y0": "Impact_2y_0",
-#                               'ImpFix_2yFlopros': 'ImpFix_2y_Flopros',
-#                               'Imp2010_2yFlopros': 'Imp2010_2y_Flopros',
-#                               'ImpFix_2y0': 'ImpFix_2y_0',
-#                               'Imp2010_2y0': 'Imp2010_2y_0'}, inplace=True)
-# # adding additional data
-assDataFrame = add_GDP_NatCat(assDataFrame, years, gdp_resc = True)
-# # storing giant dataframe containing all the data for all model runs
-assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataRegions.csv', index=False)
-
-assDataFrame = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AssembledDataRegions.csv')
-
-#  rename regions
-assDataFrame = aggregate_new_region(assDataFrame)
-
-assDataFrame = assDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/supplementary_data/assembled_data_regions.csv')
-
-#aggregate all the country based data to regions
+#  aggregate all the country based data to regions
 regDataFrame = region_aggregation(in_cols, assDataFrame)
-regDataFrame.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/RegionalAggregationDataRegions.csv', index=False)
 
-# building model median
+#  building model median
 modDataFrame = model_aggregation(in_cols, regDataFrame, years, None)
 
-modDataFrame.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/ModelMedianRegions.csv', index=False)
+modDataFrame.to_csv('../../../data/reconstruction/model_median_regions.csv', index=False)

@@ -65,47 +65,46 @@ def rel_time_attr_MK(dataFrame71):
 
     dataFrame = dataFrame71[dataFrame71['Year'] > 1979]
 
+    regLHazExp = mk.original_test(dataFrame['D_CliExp_norm_for_trend'], alpha=0.1)
 
-    regLHazExp = mk.original_test(dataFrame['Norm_Impact_2y_trend'], alpha=0.1)
-
-    slopeLHazExp = stats.theilslopes(dataFrame['Norm_Impact_2y_trend'],
+    slopeLHazExp = stats.theilslopes(dataFrame['D_CliExp_norm_for_trend'],
                                      alpha=0.1)
 
     regHE = [regLHazExp.slope, regLHazExp.p, slopeLHazExp[2], slopeLHazExp[3]]
 
-    regLFull = mk.original_test(dataFrame['Norm_Impact_Pred'], alpha=0.1)
+    regLFull = mk.original_test(dataFrame['D_Full'], alpha=0.1)
 
-    slopeLFull = stats.theilslopes(dataFrame['Norm_Impact_Pred'], alpha=0.1)
+    slopeLFull = stats.theilslopes(dataFrame['D_Full'], alpha=0.1)
 
     regF = [regLFull.slope, regLFull.p, slopeLFull[2], slopeLFull[3]]
 
-    regHaz = mk.original_test(dataFrame['Norm_ImpFix_2y_trend'], alpha=0.1)
+    regHaz = mk.original_test(dataFrame['D_1980_norm_for_trend'], alpha=0.1)
 
-    slopeHaz = stats.theilslopes(dataFrame['Norm_ImpFix_2y_trend'],
+    slopeHaz = stats.theilslopes(dataFrame['D_1980_norm_for_trend'],
                                  alpha=0.1)
 
     regH = [regHaz.slope, regHaz.p, slopeHaz[2], slopeHaz[3]]
 
-    regHaz7 = mk.original_test(dataFrame71['Norm_ImpFix_2y_trend'],
+    regHaz7 = mk.original_test(dataFrame71['D_1980_norm_for_trend'],
                                alpha=0.1)
 
-    slopeHaz7 = stats.theilslopes(dataFrame71['Norm_ImpFix_2y_trend'],
+    slopeHaz7 = stats.theilslopes(dataFrame71['D_1980_norm_for_trend'],
                                   alpha=0.1)
 
     regH7 = [regHaz7.slope, regHaz7.p, slopeHaz7[2], slopeHaz7[3]]
 
-    regHaz107 = mk.original_test(dataFrame71['Norm_Imp2010_2y_trend'],
+    regHaz107 = mk.original_test(dataFrame71['D_2010_norm_for_trend'],
                                  alpha=0.1)
 
-    slopeHaz107 = stats.theilslopes(dataFrame71['Norm_Imp2010_2y_trend'],
+    slopeHaz107 = stats.theilslopes(dataFrame71['D_2010_norm_for_trend'],
                                     alpha=0.1)
 
     regH107 = [regHaz107.slope, regHaz107.p, slopeHaz107[2], slopeHaz107[3]]
 
-    regHaz10 = mk.original_test(dataFrame['Norm_Imp2010_2y_trend'],
+    regHaz10 = mk.original_test(dataFrame['D_2010_norm_for_trend'],
                                 alpha=0.1)
 
-    slopeHaz10 = stats.theilslopes(dataFrame['Norm_Imp2010_2y_trend'],
+    slopeHaz10 = stats.theilslopes(dataFrame['D_2010_norm_for_trend'],
                                    alpha=0.1)
 
     regH10 = [regHaz10.slope, regHaz10.p, slopeHaz10[2], slopeHaz10[3]]
@@ -140,63 +139,47 @@ def normalise(dataFrame):
 
     obs_adj = dataFrame.loc[dataFrame['Year'] > 1979,
                             'natcat_flood_damages_2005_CPI'].mean() / \
-        dataFrame.loc[dataFrame['Year'] > 1979, 'Impact_Pred'].mean()
+        dataFrame.loc[dataFrame['Year'] > 1979, 'D_Full_raw'].mean()
 
-    dataFrame['Norm_Impact_Pred'] = dataFrame['Impact_Pred']*obs_adj
+    dataFrame['D_Full'] = dataFrame['D_Full_raw']*obs_adj
 
     offsetExp = dataFrame.loc[dataFrame['Year'] == 1980,
-                              'Norm_Impact_Pred'].sum() / \
+                              'D_Full'].sum() / \
         dataFrame.loc[dataFrame['Year'] == 1980,
-                      'Impact_2y_Flopros'].sum()
+                      'D_CliExp_raw'].sum()
     offsetHaz = dataFrame.loc[dataFrame['Year'] == 1980,
-                              'Norm_Impact_Pred'].sum() / \
-        dataFrame.loc[dataFrame['Year'] == 1980, 'ImpFix_2y_Flopros'].sum()
+                              'D_Full'].sum() / \
+        dataFrame.loc[dataFrame['Year'] == 1980, 'D_1980_raw'].sum()
 
-    # normalisation for plotting
+    # normalisation
 
-    dataFrame['Norm_Impact_2y_offset'] = dataFrame['Impact_2y_Flopros'] * offsetExp
-    dataFrame['Norm_ImpFix_2y_offset'] = dataFrame['ImpFix_2y_Flopros'] * offsetHaz
+    dataFrame['D_CliExp'] = dataFrame['D_CliExp_raw'] * offsetExp
+    dataFrame['D_1980'] = dataFrame['D_1980_raw'] * offsetHaz
 
-    dataFrame['Norm_Imp2010_2y_offset'] = dataFrame['Imp2010_2y_Flopros'] * offsetHaz
+    dataFrame['D_2010'] = dataFrame['D_2010_raw'] * offsetHaz
 
-    # modelspread for plotting
-
-    dataFrame['Norm_Impact_Pred_1thrd_offset'] = \
-        dataFrame['Impact_Pred_1thrd']*obs_adj
-    dataFrame['Norm_Impact_Pred_2thrd_offset'] = \
-        dataFrame['Impact_Pred_2thrd']*obs_adj
-
-    dataFrame['Norm_Impact_2y_onethird_offset'] = \
-        dataFrame['model_flood_damages_onethird_quantile']*offsetExp
-    dataFrame['Norm_Impact_2y_twothird_offset'] = \
-        dataFrame['model_flood_damages_twothird_quantile']*offsetExp
-
-    dataFrame['Norm_ImpFix_2y_onethird_offset'] = \
-        dataFrame['model_flood_damages_onethird_quantile_1980flospros']*offsetHaz
-    dataFrame['Norm_ImpFix_2y_twothird_offset'] = \
-        dataFrame['model_flood_damages_twothird_quantile_1980flospros']*offsetHaz
-
-    dataFrame['Norm_Imp2010_2y_onethird_offset'] =\
-        dataFrame['model_flood_damages_onethird_quantile_2010flospros'] * offsetHaz
-    dataFrame['Norm_Imp2010_2y_twothird_offset'] =\
-        dataFrame['model_flood_damages_twothird_quantile_2010flospros'] * offsetHaz
+    dataFrame['D_Full_1thrd_quantile'] = \
+        dataFrame['D_Full_raw_1thrd_quantile']*obs_adj
+    dataFrame['D_Full_2thrd_quantile'] = \
+        dataFrame['D_Full_raw_2thrd_quantile']*obs_adj
 
     # normalisation for trend estimation
 
     trendNormExp = dataFrame.loc[dataFrame['Year'] >= 1980,
-                                 'Norm_Impact_Pred'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'Impact_2y_Flopros'].mean()
+                                 'D_Full'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_CliExp_raw'].mean()
     trendNormHaz = dataFrame.loc[dataFrame['Year'] >= 1980,
-                                 'Norm_Impact_Pred'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'ImpFix_2y_Flopros'].mean()
+                                 'D_Full'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_1980_raw'].mean()
     trendNormHaz2010 = dataFrame.loc[dataFrame['Year'] >= 1980,
-                                     'Norm_Impact_Pred'].mean() / \
-        dataFrame.loc[dataFrame['Year'] >= 1980, 'Imp2010_2y_Flopros'].mean()
+                                     'D_Full'].mean() / \
+        dataFrame.loc[dataFrame['Year'] >= 1980, 'D_2010_raw'].mean()
 
-    dataFrame['Norm_Impact_2y_trend'] = dataFrame['Impact_2y_Flopros'] * trendNormExp
-    dataFrame['Norm_ImpFix_2y_trend'] = dataFrame['ImpFix_2y_Flopros'] * trendNormHaz
+    dataFrame['D_CliExp_norm_for_trend'] = dataFrame['D_CliExp_raw'] * trendNormExp
+    dataFrame['D_1980_norm_for_trend'] = dataFrame['D_1980_raw'] * trendNormHaz
 
-    dataFrame['Norm_Imp2010_2y_trend'] = dataFrame['Imp2010_2y_Flopros'] * trendNormHaz2010
+    dataFrame['D_2010_norm_for_trend'] = dataFrame['D_2010_raw'] * trendNormHaz2010
+
 
     return dataFrame
 
@@ -260,10 +243,6 @@ def prep_table_timeMK(region, dat, regLHaz, regLHazExp, regH7, regH107,
 
     # norm_param = regMeta.loc[regMeta['Region'] == region,'Predicted_damages'].sum()/31.
 
-    cH7_norm = regH7[0]*100/nat_param  # dam_param
-
-    cH_norm = regLHaz[0]*100/nat_param  # dam_param
-
     cH7_normCL = regH7[0]*100/nat_param  # dam_param
 
     cH7up_normCL = regH7[3]*100/nat_param - cH7_normCL  # dam_param
@@ -300,43 +279,31 @@ def prep_table_timeMK(region, dat, regLHaz, regLHazExp, regH7, regH107,
     cN_norm = regN[0]*100/nat_param
 
     table1 = pd.DataFrame({'Region': region,
-                           'Change H': regLHaz[0],  # develop_taylor(regH, 1995)[0],
-                           'Change Hn': cH_norm,
-                           'Change HnCL': cH_normCL,
-                           'Change HnCLup': cHup_normCL,
-                           'Change HnCLbot': cHbot_normCL,
-                           'Change H10': regH10[0],  # develop_taylor(regH10, 1995)[0],
-                           'Change H7': regH7[0],  # develop_taylor(regH7, 1991)[0],
-                           'Change H10nCL': cH10_normCL,
-                           'Change H10nCLup': cH10up_normCL,
-                           'Change H10nCLbot': cH10bot_normCL,
-                           'Change H107nCL': cH107_normCL,
-                           'Change H107nCLup': cH107up_normCL,
-                           'Change H107nCLbot': cH107bot_normCL,
-                           'Change H7n': cH7_norm,
-                           'Change H7nCL': cH7_normCL,
-                           'Change H7nCLup': cH7up_normCL,
-                           'Change H7nCLbot': cH7bot_normCL,
-                           'Change H107': regH107[0],  
-                           'Change En': cE_norm,
-                           'Change En10': cE10_norm,
-                           'Change Vn': cV_norm,  # develop_taylor(regV, 1995)[0],
-                           'Change I': regI[0],  # develop_taylor(regI, 1995)[0],
-                           'Change In': cI_norm,  # develop_taylor(regI, 1995)[0],
-                           'Change N': regN[0],  # develop_taylor(regN, 1995)[0],
-                           'Change Nn': cN_norm,
-                           'Sign H': regLHaz[1],
-                           'Sign H7': regH7[1],
-                           'Sign H10': regH10[1],
-                           'Sign H107': regH107[1],
-                           'Sign I': regI[1],
-                           'Sign N': regN[1],
-                           '2010_haz_loss80': regH10[0]*31,
-                           '2010_haz_loss71': regH107[0]*40,
-                           '2010_haz_loss80_rel': regH10[0]*31/nat_param,
-                           '2010_haz_loss71_rel': regH107[0]*40/nat_param,
-                           '2010_haz_loss80_rel10': regH10[0]/regN[0],
-                           '2010_haz_loss71_rel10': regH107[0]/regN[0],
+                           'C_1980_80': cH_normCL,
+                           'C_1980_80up': cHup_normCL,
+                           'C_1980_80bot': cHbot_normCL,
+                           'C_2010_80': cH10_normCL,
+                           'C_2010_80up': cH10up_normCL,
+                           'C_2010_80bot': cH10bot_normCL,
+                           'C_2010_71': cH107_normCL,
+                           'C_2010_71up': cH107up_normCL,
+                           'C_2010_71bot': cH107bot_normCL,
+                           'C_1980_71': cH7_normCL,
+                           'C_1980_71up': cH7up_normCL,
+                           'C_1980_71bot': cH7bot_normCL,
+                           'E_exposure': cE_norm,
+                           'E_exposure_2010': cE10_norm,
+                           'V_vulnerability': cV_norm,  # develop_taylor(regV, 1995)[0],
+                           'M_damage_modeled': cI_norm,  # develop_taylor(regI, 1995)[0],
+                           'N_damage_observed': cN_norm,
+                           'p_val_C_1980_80': regLHaz[1],
+                           'p_val_C_1980_71': regH7[1],
+                           'p_val_C_2010_80': regH10[1],
+                           'p_val_C_2010_71': regH107[1],
+                           'p_val_M_damage_modeled': regI[1],
+                           'p_val_N_damage_observed': regN[1],
+                           'delta_2010_since80': (regH10[0]*31/nat_param)*100,
+                           'delta_2010_since71': (regH107[0]*40/nat_param)*100,
                    }, index =[0])
     return table1
 
@@ -390,31 +357,22 @@ def attr_regr(dataFrame):
     return normData, attrTable
 
 
-DATA = pd.read_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/VulnerabilityAdjustmentTimeSeriesRegions.csv')
+DATA = pd.read_csv('../../../data/reconstruction/vulnerability_adjustment_TimeSeries_regions.csv')
 
-region_names = {
-               'NAM': 'North America',
-               'AUS': 'Oceania',
-               'LAM': 'Central America',
-               'EUR': 'Western Europe',
-               'NAFARA': 'North Africa + Middle East',
-               'SSAF': 'SSA + Southern Africa',
-               'CAS': 'Central Asia + Eastern Europe',
-               'SWEA': 'Southern Asia + South-East Asia',
-               'CHN': 'Eastern Asia',
-               'GLB': 'Global',
-                }
+region_names = {'NAM': 'North America',
+                'LAM': 'Central America',
+                'EUR': 'Europe',
+                'NAF': 'North Africa + Middle East',
+                'SSA': 'SSA + Southern Africa',
+                'CAS': 'Central Asia + Eastern Europe',
+                'SEA': 'Southern Asia + South-East Asia',
+                'EAS': 'Eastern Asia',
+                'OCE': 'Oceania',
+                'GLB': 'Global'}
 test_regions = list(region_names)
-
-regr = 'MK'
-
-
-norm_names = {'Predicted_damages': 'RelPred',
-              'Observed_damages': 'RelObs',
-              'Absolute_damages': 'Abs'}
 
 normData, attrTable = attr_regr(DATA)
 
-attrTable.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AttributionMetaDataRegions.csv', index=False)
+attrTable.to_csv('../../../data/reconstruction/attribution_MetaData_regions.csv', index=False)
 
-normData.to_csv('/home/insauer/projects/NC_Submission/Data/postprocessing/AttributionTimeSeriesRegions.csv', index=False)
+normData.to_csv('../../../data/reconstruction/attribution_TimeSeries_regions.csv', index=False)

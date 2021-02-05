@@ -17,34 +17,33 @@ import pymannkendall as mk
 from scipy.stats import shapiro
 import numpy.ma as ma
 import matplotlib.pyplot as plt
-DATA_TS = pd.read_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/AttributionTimeSeriesSubregions.csv')
-DATA_ATTR = pd.read_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/AttributionMetaDataSubregions.csv')
 
-teleData = pd.read_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/InputData/teleconnections_lag.csv')
+DATA_TS = pd.read_csv('../../../data/reconstruction/attribution_TimeSeries_subregions.csv')
+DATA_ATTR = pd.read_csv('../../../data/reconstruction/attribution_MetaData_subregions.csv')
 
-output_path = '/home/insauer/projects/NC_Submission/Climada_papers/Test/Lag_ENSO_GMT_PDO_NAO_Loo_Subregions.csv'
+teleData = pd.read_csv('../../../data/climate_oscillations/norm_oscillations_lag.csv')
 
 normClim = True
 
 teleData = teleData.loc[teleData['Year'] >= 1971]
 teleData80 = teleData.loc[teleData['Year'] >= 1980]
-telecon80 = teleData80[['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']]
+telecon80 = teleData80[['ENSO', 'ENSOlag', 'AMO', 'AMOlag', 'PDO', 'PDOlag', 'NAO', 'NAOlag']]
 
-telecon = teleData[['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']]
+telecon = teleData[['ENSO', 'ENSOlag', 'AMO', 'AMOlag', 'PDO', 'PDOlag', 'NAO', 'NAOlag']]
 
-region_names = {'SSAF': 'SSA + Southern Africa',
-                'EUR': 'Western Europe',
-                'GLB': 'Global',
-                'LAM': 'Central America',
-                'NAFARA': 'North Africa + Middle East',
-                'CAS': 'Central Asia + Eastern Europe',
-                'SWEA': 'Southern Asia + South-East Asia',
-                'CHN': 'Eastern Asia',
-                'AUS': 'Oceania',
-                'NAM': 'North America'
+region_names = {'GLB': 'Global (GLB)',
+              'NAM':'North America (NAM)',
+              'EAS':'Eastern Asia (EAS)',
+              'OCE':'Oceania (OCE)',
+              'LAM':'Latin America (LAM)',
+              'EUR':'Europe (EUR)',
+              'CAS':'Central Asia (CAS)',
+              'SSA':'South & Sub-Sahara Africa (SSA)',
+              'SEA':'South & South-East Asia (SEA)', 
+              'NAF':'North Africa & Middle East (NAF)'
                 }
 
-predictors = ['ENSO', 'ENSO_lag', 'GMT', 'PDO', 'PDO_lag', 'NAO', 'NAO_lag']
+predictors = ['ENSO', 'ENSOlag', 'AMO', 'PDO', 'PDOlag', 'NAO', 'NAOlag']
 
 link_fnc_list = [sm.families.links.log(), sm.families.links.identity(),
                  sm.families.links.inverse_power()]
@@ -101,7 +100,7 @@ def looCV(clim, predic, fnc):
 
 def pred_double(comb):
 
-    pred_names = ['GMT', 'ENSO', 'NAO', 'PDO']
+    pred_names = ['AMO', 'ENSO', 'NAO', 'PDO']
 
     for p in pred_names:
         if p in comb:
@@ -144,7 +143,7 @@ def find_best_model(climateDat, telecon):
 
     max_i = 5000
 
-    if test_region == 'AUS':
+    if test_region == 'OCE':
 
         climateDat = np.nan_to_num(climateDat)
 
@@ -231,44 +230,28 @@ def test_residuals(model, timeperiod,reg,dis):
 
     """
     res_trend = mk.original_test(model.resid_response, alpha=0.1)
-    
-    fig, ax = plt.subplots(figsize=(12, 8))
-    sm.graphics.tsa.plot_acf(model.resid_response, lags=39, ax = ax)
-    ax.set_xlabel('lag')
-    ax.set_title('Autocorrelation {}_{}'.format(reg,dis))
-    #fig.savefig('/home/insauer/projects/Attribution/Floods/Paper_NC_Resubmission_data/Response_letter/Autocorr_Residuals/AutocorrResidualsGMT_{}_{}.png'.format(reg,dis),bbox_inches = 'tight',dpi =600)
 
-    alt_trend_test = mk.hamed_rao_modification_test(model.resid_response)
-
-    return res_trend.slope, res_trend.p, alt_trend_test.trend, alt_trend_test.p
-
+    return res_trend.slope, res_trend.p
 
 def test_autocorrelation(time_series):
     """
-    Test for a residual trend, applying a Mann-Kendall-test
+    Test for autocorrelation
 
     Parameters
     ----------
-    model : GLMObject
-        Best model
-    timeperiod : np.array
-        considered years (not used here)
+    time-series
 
     Returns
     -------
     float
-        slope in residuals
-    float
-        p-value
+        tau
 
     """
     auto = mk.original_test(time_series, alpha=0.1)
 
     return auto.Tau
 
-
-def extract_model_coefs(region, model, link, model10, link10,
-                        model80, link80, model8010, link8010, dis):
+def extract_model_coefs_short(region, model, link, dis):
     """
     Reads the coefficients and p-values for each predictor of the best model
     and saves data in a csv file. To achieve comparability between coefficients of
@@ -283,26 +266,14 @@ def extract_model_coefs(region, model, link, model10, link10,
         best model (1971-2010, 1980 fixed exposure)
     link : int
         index of link function (1971-2010, 1980 fixed exposure)
-    model10 : GLMObject
-        best model (1971-2010, 2010 fixed exposure)
-    link10 : int
-        index of link function (1971-2010, 2010 fixed exposure)
-    model80 : GLMObject
-        best model (1980-2010, 1980 fixed exposure)
-    link80 : int
-        index of link function (1980-2010, 1980 fixed exposure)
-    model8010 : GLMObject
-        best model (1980-2010, 2010 fixed exposure)
-    link8010 : int
-        index of link function (1980-2010, 1980 fixed exposure)
     dis : string
         discharge group
     """
     shortage = ['', '10', '80', '8010']
     dev_index = [20, 20, 15, 15]
-    mods = [model,  model10, model80, model8010]
-    coefs = ['ENSO', 'AMO', 'PDO', 'NAO', 'GMT']
-    lnks = [link,  link10, link80, link8010]
+    mods = [model]
+    coefs = ['ENSO', 'ENSOlag', 'AMO', 'PDO', 'PDOlag', 'NAO', 'NAOlag']
+    lnks = [link]
 
     for m, mod in enumerate(mods):
 
@@ -311,26 +282,24 @@ def extract_model_coefs(region, model, link, model10, link10,
         for c, coef in enumerate(coefs):
             try:
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                              coef+'_'+shortage[m]] = mod.params[coef]
+                              'alpha_{}_amo_run'.format(coef)] = mod.params[coef]
                 coef_deriv = link_fnc_list[lnks[m]].inverse_deriv(teleData[coef])\
                     * mod.params[coef]
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                              coef+'dv_'+shortage[m]] = np.array(coef_deriv)[dev_index[m]]
+                              'gammaAbs_{}_amo_run'.format(coef)] = np.array(coef_deriv)[dev_index[m]]
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                              coef+'pval_'+shortage[m]] = mod.pvalues[coef]
+                              'pval_{}_amo_run'.format(coef)] = mod.pvalues[coef]
 
                 coeff_sum += mod.params[coef]
             except KeyError:
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                              coef+'_'+shortage[m]] = np.nan
+                              'alpha_{}_amo_run'.format(coef)] = np.nan
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                              coef+'pval_'+shortage[m]] = np.nan
+                              'gammaAbs_{}_amo_run'.format(coef)] = np.nan
                 DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                              coef+'dv_'+shortage[m]] = np.nan
-        DATA_ATTR.loc[DATA_ATTR['Region'] == region+'_'+dis,
-                      'CoefSum_'+shortage[m]] = coeff_sum
+                              'pval_{}_amo_run'.format(coef)] = np.nan
 
-    DATA_ATTR.to_csv(output_path)
+    DATA_ATTR.to_csv('../../../data/reconstruction/ENSO_AMO_PDO_NAO_subregions.csv')     
 
 
 def unexplainable_Trends(pval, slope, test_region, change, sign):
@@ -359,6 +328,7 @@ def unexplainable_Trends(pval, slope, test_region, change, sign):
     if pval > 0.1:
         return False
 
+
     haz_slope = DATA_ATTR.loc[DATA_ATTR['Region'] == test_region, change].sum()
 
     if (haz_slope < 0) and (slope > 0):
@@ -372,6 +342,8 @@ def unexplainable_Trends(pval, slope, test_region, change, sign):
 
 for i, test_region in enumerate(test_regions):
     
+    
+    
     print(test_region)
     DATA_region = DATA_TS[(DATA_TS['Region'] == test_region) &
                           (DATA_TS['Year'] < 2011) & (DATA_TS['Year'] > 1970)]
@@ -379,20 +351,20 @@ for i, test_region in enumerate(test_regions):
 
     DATA_region80 = DATA_TS[(DATA_TS['Region'] == test_region) &
                             (DATA_TS['Year'] < 2011) & (DATA_TS['Year'] > 1979)]
-    # DATA_region80 = DATA_region80.reset_index()
 
     if test_region != 'NAM':
-        climateDataPos = np.array(DATA_region['NormHaz_ImpFix_2yPos_offset'])
-        auto_corrPos = test_autocorrelation(climateDataPos)
+        climateDataPos = np.array(DATA_region['D_1980'])
         
+        auto_corrPos = test_autocorrelation(climateDataPos)
+    
         if normClim is True:
             climateDataPos = climateDataPos/np.nanmax(climateDataPos)
-            
+        
         t, shap_logPos = shapiro(np.log(climateDataPos))
         t, shap_normPos = shapiro(climateDataPos)
         
         best_modelPos, yPos, xPos, maxiPos, pearson_corrPos,\
-            best_looPos, loosPos, combPos = find_best_model(climateDataPos, telecon)
+        best_looPos, loosPos, combPos = find_best_model(climateDataPos, telecon)
         
         comb_df_pos = pd.DataFrame(combPos)
         comb_df_pos = comb_df_pos.T
@@ -401,96 +373,80 @@ for i, test_region in enumerate(test_regions):
         loo_df_pos = loo_dfPos.T
         loo_df_pos.columns = ['log', 'identity', 'inverse-power']
         loo_df_pos['combination'] = comb_df_pos.iloc[:, 0]
-        
-        extract_model_coefs(test_region,  best_modelPos, yPos,  'Pos')
-        coefPos, pvalPos, alt_trendPos, alt_pvalPos = test_residuals(best_modelPos, np.arange(1971, 2011),test_region,'Pos')
-        
-        unexTPos = unexplainable_Trends(pvalPos, coefPos, test_region+'_Pos', 'Change H7', 'Sign H7')
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Res_Sig'] = pvalPos
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Res_Slope'] = coefPos
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Alt_Sig'] = alt_pvalPos
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Alt_Slope'] = alt_trendPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Unexplained Haz'] = unexTPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'CorrCoef'] = pearson_corrPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'BestLoo'] = best_looPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Best_link'] =\
-        best_modelPos.fit_history['iteration']
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Link_func'] = yPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Combi'] = xPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Norm_dist'] = shap_normPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'LogNorm_dist'] = shap_logPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Maxi'] = maxiPos
-        
-        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Pos', 'Autocorr'] = auto_corrPos
     
-    
-    climateDataNeg = np.array(DATA_region['NormHaz_ImpFix_2yNeg_offset'])
+        loo_df_pos.to_csv('../../../data/reconstruction/LooIC_ENSO_PDO_NAO_AMO_{}_pos.csv'.format(test_region))
+
+        extract_model_coefs_short(test_region,  best_modelPos, yPos,  'pos')
+        
+        coefPos, pvalPos = test_residuals(best_modelPos, np.arange(1971, 2011),test_region, 'pos')
+        
+        unexTPos = unexplainable_Trends(pvalPos, coefPos, test_region+'_pos','C_1980_71', 'p_val_C_1980_71')
+        
+        
+        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_pos', 'pval_residual_trend_amo_run'] = pvalPos
+        'SSAF': 'SSA + Southern Africa',
+                'EUR': 'Western Europe',
+                'GLB': 'Global',
+                'LAM': 'Central America',
+                'NAFARA': 'North Africa + Middle East',
+                'CAS': 'Central Asia + Eastern Europe',
+                'SWEA': 'Southern Asia + South-East Asia',
+                'CHN': 'Eastern Asia',
+                'AUS': 'Oceania',
+                'NAM': 'North America',
+        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_pos', 'residual_trend_amo_run'] = coefPos
+        
+        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_pos', 'R2_D_1980_bm_amo_run'] = pearson_corrPos
+        
+        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_pos', 'oose_amo_run'] = best_looPos
+
+        DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_pos', 'Unexplained Trend'] = unexTPos
+
+    climateDataNeg = np.array(DATA_region['D_1980'])
     auto_corrNeg = test_autocorrelation(climateDataNeg)
 
-    if normClim is True:
 
+    if normClim is True:
+        
         climateDataNeg = climateDataNeg/np.nanmax(climateDataNeg)
 
-    t, shap_logNeg = shapiro(np.log(climateDataNeg))
-    t, shap_normNeg = shapiro(climateDataNeg)
-
+    
     best_modelNeg, yNeg, xNeg, maxiNeg, pearson_corrNeg,\
         best_looNeg, loosNeg, combNeg = find_best_model(climateDataNeg, telecon)
 
+    
+
     comb_df_neg = pd.DataFrame(combNeg)
     comb_df_neg = comb_df_neg.T
-    # store all out-of-sample-errors
-    loo_df_pos.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/LooIC_ENSO_GMT_PDO_NAO_Subregions_{}Pos.csv'.format(test_region))
 
+    
     loo_dfNeg = pd.DataFrame(loosNeg)
     loo_df_neg = loo_dfNeg.T
     loo_df_neg.columns = ['log', 'identity', 'inverse-power']
     loo_df_neg['combination'] = comb_df_neg.iloc[:, 0]
-    # store all out-of-sample-errors
-    loo_df_neg.to_csv('/home/insauer/projects/NC_Submission/Climada_papers/Test/LooIC_ENSO_GMT_PDO_NAO_Subregions_{}Neg.csv'.format(test_region))
+    
+    loo_df_neg.to_csv('../../../data/reconstruction/LooIC_ENSO_PDO_NAO_AMO_{}_neg.csv'.format(test_region))
 
-    extract_model_coefs(test_region,  best_modelNeg,  yNeg, 'Neg')
+    
+    extract_model_coefs_short(test_region,  best_modelNeg,  yNeg, 'neg')
 
-    coefNeg, pvalNeg, alt_trendNeg, alt_pvalNeg = test_residuals(best_modelNeg, np.arange(1971, 2011),test_region,'Neg')
+    
+    coefNeg, pvalNeg = test_residuals(best_modelNeg, np.arange(1971, 2011), test_region, 'neg')
 
-    unexTNeg = unexplainable_Trends(pvalNeg, coefNeg, test_region+'_Neg', 'Change H7', 'Sign H7')
+    unexTNeg = unexplainable_Trends(pvalNeg, coefNeg, test_region+'_neg', 'C_1980_71', 'p_val_C_1980_71')
+ 
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_neg', 'pval_residual_trend_amo_run'] = pvalNeg
+   
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_neg', 'residual_trend_amo_run'] = coefNeg
+  
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_neg', 'Unexplained Trend'] = unexTNeg
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Res_Sig'] = pvalNeg
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Alt_Sig'] = alt_pvalNeg
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_neg', 'R2_D_1980_bm_amo_run'] = pearson_corrNeg
 
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Res_Slope'] = coefNeg
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Alt_Slope'] =  alt_trendNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Unexplained Haz'] = unexTNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'CorrCoef'] = pearson_corrNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'BestLoo'] = best_looNeg
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Autocorr'] = auto_corrNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Best_link'] =\
-        best_modelNeg.fit_history['iteration']
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Link_func'] = yNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Combi'] = xNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Norm_dist'] = shap_normNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'LogNorm_dist'] = shap_logNeg
-
-    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_Neg', 'Maxi'] = maxiNeg
-
-    DATA_ATTR.to_csv(output_path)
+    DATA_ATTR.loc[DATA_ATTR['Region'] == test_region+'_neg', 'oose_amo_run'] = best_looNeg
 
 
-DATA_ATTR.to_csv(output_path)
+    DATA_ATTR.to_csv('../../../data/reconstruction/ENSO_AMO_PDO_NAO_subregions.csv')
+
+
+DATA_ATTR.to_csv('../../../data/reconstruction/ENSO_AMO_PDO_NAO_subregions.csv')

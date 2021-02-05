@@ -11,21 +11,21 @@ from climada.util.constants import RIVER_FLOOD_REGIONS_CSV
    wealth as assumed to be the best option if the conversion is not possible due to missing data.
 """
 
-gdp_pc = pd.read_csv('~/data/exposure_rescaling/' +
+gdp_pc = pd.read_csv('../../../data/exposure_rescaling/' +
                      'Income-PPP2005_ISIMIP_merged_Maddison-pwt81_1850-2015_extended_WDI-1.csv')
 
-pop = pd.read_csv('~/data/exposure_rescaling/' +
+pop = pd.read_csv('../../../data/exposure_rescaling/' +
                   'Population_ISIMIP-pwt81_1850-2009_extended_WDI_filled-with-Hyde.csv')
 
 # insert gridded gdp file here  https://doi.org/10.5880/pik.2017.007 'GCP_PPP-2005_1850-2100.nc'
 # file needs to be interpolated to yearly data and upscaled to 2.5 arcmin
 
-gdp_path = '~/data/downloads/gridded_gdp.nc'
+gdp_path = '../../../data/downloads/gridded_gdp.nc'
 
 # insert pwt data here https://www.rug.nl/ggdc/productivity/pwt/
-pwd = pd.read_excel('~/data/downloads/pwt91.xlsx', sheet_name='Data')
+pwd = pd.read_excel('../../../data/pwt91.xlsx', sheet_name='Data')
 
-gdp2asset = pd.read_excel('/home/insauer/projects/Attribution/Data/' +
+gdp2asset = pd.read_excel('../../../data/exposure_rescaling/' +
                           'global-wealth-databook-2016_extract+ISO.xlsx')
 
 years = np.arange(1950, 2012)
@@ -78,8 +78,8 @@ for iso in isos:
             pp_cgdpe = 1.
 
         ppco_dataDF.loc[ppco_dataDF['ISO']== iso, str(year)] = pp_cgdpo
-        rs_dataDF.to_csv('~/data/exposure_rescaling/resc_ssp_transition_repro.csv')
-        ppco_dataDF.to_csv('~/data/exposure_rescaling/totalwealth_capital_stock_rescaling.csv')
+        rs_dataDF.to_csv('../../../data/reconstruction/resc_ssp_transition_repro.csv')
+        ppco_dataDF.to_csv('../../../data/reconstruction/totalwealth_capital_stock_rescaling.csv')
 
-rs_dataDF.to_csv('~/data/exposure_rescaling/resc_ssp_transition_repro.csv')
-ppco_dataDF.to_csv('~/data/exposure_rescaling/totalwealth_capital_stock_rescaling.csv')
+rs_dataDF.to_csv('../../../data/reconstruction/resc_ssp_transition_repro.csv')
+ppco_dataDF.to_csv('../../../data/reconstruction/totalwealth_capital_stock_rescaling.csv')
