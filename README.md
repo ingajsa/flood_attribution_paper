@@ -30,7 +30,18 @@ astropy.convolution
 
 For the demo, we strongly recommend to install Jupyter-Notebook
 
+
 2 INSTALLATION GUIDE
+
+The easiest way to run the Demo tutorials is to use the Sauer21.yml file in the dependencies subfolder listing all required packages and package versions to initialize your python environment. 
+For instance, with [conda](https://www.anaconda.com/) a virtual environment with the name **env_name** can be created by execting
+
+```
+conda env create -f dependencies/Sauer.yml --name env_name
+```
+in the command line.
+
+However, extra steps are necessary if you want to do the spatial aggregations with CLIMADA, which is not necessary for the exercises in the lecture. 
 
 A detailed description on how to install CLIMADA is provided under
 
